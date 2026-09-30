@@ -1,0 +1,2612 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-tema="claro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Financeiro Natália Dias — Sistema de cobrança e vencimentos">
+<meta name="theme-color" content="#c2557f">
+<title>Financeiro Natália Dias</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Dancing+Script:wght@600;700&family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   1. VARIÁVEIS DE TEMA
+   ============================================================ */
+:root{
+  --fonte-titulo:'Cormorant Garamond','Times New Roman',Georgia,serif;
+  --fonte-caligrafia:'Dancing Script','Segoe Script',cursive;
+  --fonte-texto:'Nunito','Segoe UI',system-ui,-apple-system,sans-serif;
+  --raio-g:22px; --raio-m:14px; --raio-p:10px;
+  --transicao:.3s cubic-bezier(.4,0,.2,1);
+  --largura-menu:290px;
+}
+html[data-tema="claro"]{
+  --fundo:#fdf6fa; --fundo-alt:#f7e9f1;
+  --superficie:#ffffff; --superficie-2:#fdf2f7;
+  --texto:#3d2b3a; --texto-suave:#7d6779;
+  --primaria:#c2557f; --primaria-suave:#f6d9e5;
+  --acento:#8e6bb8; --acento-suave:#e8ddf5;
+  --borda:#f0dbe7;
+  --sucesso:#37946a; --sucesso-suave:#dcf2e7;
+  --alerta:#c9821a; --alerta-suave:#fbeed6;
+  --perigo:#c4405a; --perigo-suave:#fadde3;
+  --sombra:0 12px 32px rgba(160,90,140,.14);
+  --sombra-forte:0 22px 48px rgba(160,90,140,.26);
+  --vidro:rgba(255,255,255,.72);
+}
+html[data-tema="escuro"]{
+  --fundo:#191220; --fundo-alt:#221830;
+  --superficie:#251a2e; --superficie-2:#2f2139;
+  --texto:#f4e9f2; --texto-suave:#b9a4bd;
+  --primaria:#ec93bb; --primaria-suave:#47263a;
+  --acento:#c3a2ec; --acento-suave:#38294f;
+  --borda:#3a2a45;
+  --sucesso:#6fd6a1; --sucesso-suave:#1e3d31;
+  --alerta:#f0b95e; --alerta-suave:#43331b;
+  --perigo:#f2879c; --perigo-suave:#472430;
+  --sombra:0 12px 32px rgba(0,0,0,.45);
+  --sombra-forte:0 22px 48px rgba(0,0,0,.62);
+  --vidro:rgba(37,26,46,.78);
+}
+
+/* ============================================================
+   2. BASE
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; min-height:100vh;
+  font-family:var(--fonte-texto); font-size:16px; line-height:1.6;
+  background:var(--fundo); color:var(--texto);
+  transition:background var(--transicao), color var(--transicao);
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:var(--fonte-titulo); font-weight:700; line-height:1.2; margin:0 0 .4em}
+h1{font-size:clamp(1.9rem,4vw,2.6rem)}
+h2{font-size:clamp(1.4rem,3vw,1.9rem)}
+h3{font-size:1.15rem}
+p{margin:0 0 1em}
+a{color:var(--primaria)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--acento); outline-offset:3px; border-radius:8px}
+
+.pular-link{position:absolute;left:-9999px;top:0;z-index:999;background:var(--primaria);color:#fff;padding:.85rem 1.4rem;border-radius:0 0 var(--raio-m) 0;text-decoration:none;font-weight:700}
+.pular-link:focus{left:0}
+.apenas-leitor{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* ============================================================
+   3. TELA DE LOGIN  (AJUSTADA — menor e com versão)
+   ============================================================ */
+.tela-login{
+  min-height:100vh; display:grid; place-items:center; padding:1.5rem;
+  background:
+    radial-gradient(900px 520px at 8% 8%, var(--primaria-suave), transparent 62%),
+    radial-gradient(760px 480px at 95% 92%, var(--acento-suave), transparent 62%),
+    var(--fundo);
+  position:relative;
+}
+.tela-login[hidden],
+#app[hidden]{ display:none !important; }
+
+.tela-login__tema{position:absolute;top:1rem;right:1rem;z-index:5}
+
+.cartao-login{
+  width:min(360px,100%);
+  background:var(--vidro);
+  backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+  border:1px solid var(--borda); border-radius:var(--raio-g);
+  box-shadow:var(--sombra-forte);
+  padding:1.7rem 1.6rem 1.3rem;
+  text-align:center;
+  animation:surgir .6s cubic-bezier(.2,.9,.3,1.1) both;
+}
+@keyframes surgir{from{opacity:0;transform:translateY(22px) scale(.97)}to{opacity:1;transform:none}}
+
+.cartao-login__marca{
+  font-family:var(--fonte-caligrafia);
+  font-size:clamp(1.6rem,4vw,2rem);
+  font-weight:700; color:var(--primaria);
+  line-height:1.05; margin-bottom:.1rem;
+  text-shadow:0 3px 14px rgba(194,85,127,.22);
+}
+.cartao-login__marca span{display:block; font-size:.7em; margin-top:-.1em}
+.cartao-login__sub{
+  font-family:var(--fonte-titulo); font-style:italic;
+  color:var(--texto-suave); letter-spacing:.05em;
+  margin-bottom:1.1rem; font-size:.88rem;
+}
+.flor{font-size:1.05rem; color:var(--acento); display:block; margin-bottom:.35rem}
+
+.campo{margin-bottom:.85rem; text-align:left}
+.campo label{display:block; font-size:.74rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--texto-suave); margin-bottom:.32rem}
+.campo input,.campo select,.campo textarea{
+  width:100%; padding:.62rem .85rem;
+  background:var(--superficie);
+  border:1.5px solid var(--borda);
+  border-radius:var(--raio-m);
+  font-size:.92rem;
+  transition:border-color var(--transicao),box-shadow var(--transicao),background var(--transicao);
+}
+.campo input:focus,.campo select:focus,.campo textarea:focus{
+  border-color:var(--primaria); box-shadow:0 0 0 4px var(--primaria-suave); outline:none;
+}
+.campo__ajuda{font-size:.72rem; color:var(--texto-suave); margin-top:.28rem}
+
+/* Rodapé do cartão de login — versão */
+.cartao-login__rodape{
+  margin-top:1.1rem; padding-top:.85rem;
+  border-top:1px dashed var(--borda);
+  display:flex; align-items:center; justify-content:space-between; gap:.6rem;
+  font-size:.72rem; color:var(--texto-suave);
+}
+.cartao-login__versao{
+  font-family:var(--fonte-titulo); font-style:italic;
+  font-size:.8rem; color:var(--acento);
+  letter-spacing:.03em;
+}
+.cartao-login__versao strong{color:var(--primaria); font-style:normal; font-weight:800}
+.cartao-login__badge{
+  display:inline-flex; align-items:center; gap:.3rem;
+  padding:.2rem .55rem; border-radius:999px;
+  background:var(--primaria-suave); color:var(--primaria);
+  font-size:.66rem; font-weight:800; letter-spacing:.05em; text-transform:uppercase;
+}
+
+/* Botão de login um pouco mais compacto */
+.cartao-login .btn{padding:.7rem 1.2rem; font-size:.92rem}
+
+/* ============================================================
+   4. BOTÕES
+   ============================================================ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.8rem 1.5rem;border-radius:var(--raio-m);border:1.5px solid transparent;cursor:pointer;font-weight:700;letter-spacing:.02em;transition:transform var(--transicao),box-shadow var(--transicao),background var(--transicao),border-color var(--transicao),color var(--transicao);text-decoration:none}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn--primario{background:linear-gradient(135deg,var(--primaria),var(--acento));color:#fff;box-shadow:0 8px 22px rgba(194,85,127,.34)}
+.btn--primario:hover{box-shadow:0 12px 30px rgba(194,85,127,.48);transform:translateY(-2px)}
+.btn--fantasma{background:transparent;color:var(--primaria);border-color:var(--primaria)}
+.btn--fantasma:hover{background:var(--primaria-suave)}
+.btn--suave{background:var(--superficie-2);color:var(--texto);border-color:var(--borda)}
+.btn--suave:hover{background:var(--primaria-suave);border-color:var(--primaria)}
+.btn--perigo{background:var(--perigo-suave);color:var(--perigo);border-color:transparent}
+.btn--perigo:hover{background:var(--perigo);color:#fff}
+.btn--bloco{width:100%}
+.btn--pequeno{padding:.5rem .9rem;font-size:.85rem;border-radius:var(--raio-p)}
+.btn-icone{width:44px;height:44px;padding:0;border-radius:50%;background:var(--superficie);border:1.5px solid var(--borda);display:inline-grid;place-items:center;cursor:pointer;font-size:1.15rem;transition:var(--transicao);color:var(--texto)}
+.btn-icone:hover{background:var(--primaria-suave);border-color:var(--primaria);transform:translateY(-2px)}
+
+/* ============================================================
+   5. CABEÇALHO E MENU
+   ============================================================ */
+.cabecalho{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:1rem;padding:.85rem clamp(.9rem,3vw,2rem);background:var(--vidro);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--borda);box-shadow:0 4px 24px rgba(160,90,140,.08)}
+.cabecalho__titulo{font-family:var(--fonte-caligrafia);font-size:clamp(1.3rem,3vw,1.7rem);font-weight:700;color:var(--primaria);margin:0;line-height:1;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cabecalho__acoes{display:flex;align-items:center;gap:.6rem}
+.cabecalho__usuario{font-size:.85rem;color:var(--texto-suave);display:none}
+@media(min-width:620px){.cabecalho__usuario{display:inline}}
+
+.hamburguer{position:relative}
+.hamburguer__linhas{display:block;width:20px;height:14px;position:relative}
+.hamburguer__linhas span{position:absolute;left:0;width:100%;height:2.4px;border-radius:3px;background:var(--primaria);transition:var(--transicao)}
+.hamburguer__linhas span:nth-child(1){top:0}
+.hamburguer__linhas span:nth-child(2){top:50%;transform:translateY(-50%)}
+.hamburguer__linhas span:nth-child(3){bottom:0}
+.hamburguer[aria-expanded="true"] .hamburguer__linhas span:nth-child(1){top:50%;transform:translateY(-50%) rotate(45deg)}
+.hamburguer[aria-expanded="true"] .hamburguer__linhas span:nth-child(2){opacity:0;transform:translateX(-8px)}
+.hamburguer[aria-expanded="true"] .hamburguer__linhas span:nth-child(3){bottom:50%;transform:translateY(50%) rotate(-45deg)}
+
+.sino{position:relative}
+.sino__contador{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;padding:0 5px;background:var(--perigo);color:#fff;border-radius:999px;font-size:.7rem;font-weight:800;display:grid;place-items:center;border:2px solid var(--superficie)}
+.sino__contador[hidden]{display:none}
+
+.menu{position:fixed;inset:0 auto 0 0;z-index:100;width:min(var(--largura-menu),86vw);background:var(--superficie);border-right:1px solid var(--borda);box-shadow:var(--sombra-forte);transform:translateX(-104%);transition:transform .38s cubic-bezier(.25,.8,.3,1);display:flex;flex-direction:column;overflow-y:auto}
+.menu.aberto{transform:translateX(0)}
+.menu__topo{padding:1.4rem 1.4rem 1rem;border-bottom:1px solid var(--borda);display:flex;align-items:center;justify-content:space-between;gap:.6rem}
+.menu__marca{font-family:var(--fonte-caligrafia);font-size:1.55rem;color:var(--primaria);font-weight:700;line-height:1.05}
+.menu__marca small{display:block;font-size:.62em;color:var(--acento);letter-spacing:.02em}
+.menu__lista{list-style:none;margin:0;padding:1rem .8rem;flex:1}
+.menu__item{margin-bottom:.3rem}
+.menu__botao{width:100%;display:flex;align-items:center;gap:.85rem;padding:.85rem 1rem;border:none;background:transparent;border-radius:var(--raio-m);cursor:pointer;text-align:left;font-weight:600;color:var(--texto);transition:var(--transicao)}
+.menu__botao:hover{background:var(--primaria-suave);color:var(--primaria);transform:translateX(4px)}
+.menu__botao[aria-current="page"]{background:linear-gradient(135deg,var(--primaria-suave),var(--acento-suave));color:var(--primaria);font-weight:800;box-shadow:inset 3px 0 0 var(--primaria)}
+.menu__icone{font-size:1.2rem;width:1.6rem;text-align:center}
+.menu__rodape{padding:1rem 1.2rem 1.6rem;border-top:1px solid var(--borda);font-size:.78rem;color:var(--texto-suave)}
+
+.overlay{position:fixed;inset:0;z-index:90;background:rgba(45,20,40,.42);backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s}
+.overlay.ativo{opacity:1;visibility:visible}
+
+/* ============================================================
+   6. CONTEÚDO
+   ============================================================ */
+.conteudo{padding:clamp(1rem,3vw,2.2rem);max-width:1400px;margin:0 auto}
+.visao{display:none;animation:aparecer .45s ease both}
+.visao.ativa{display:block}
+@keyframes aparecer{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.titulo-visao{display:flex;flex-wrap:wrap;align-items:baseline;gap:.6rem 1rem;margin-bottom:1.4rem;padding-bottom:.7rem;border-bottom:2px solid var(--borda)}
+.titulo-visao h2{margin:0;color:var(--primaria)}
+.titulo-visao p{margin:0;color:var(--texto-suave);font-style:italic;font-family:var(--fonte-titulo);font-size:1.05rem}
+
+.cartao{background:var(--superficie);border:1px solid var(--borda);border-radius:var(--raio-g);padding:clamp(1.1rem,2.4vw,1.7rem);box-shadow:var(--sombra);margin-bottom:1.4rem}
+.cartao__titulo{display:flex;align-items:center;gap:.6rem;font-family:var(--fonte-titulo);font-size:1.3rem;font-weight:700;color:var(--acento);margin-bottom:1rem}
+
+.indicadores{display:grid;gap:1rem;margin-bottom:1.4rem;grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.indicador{background:var(--superficie);border:1px solid var(--borda);border-radius:var(--raio-g);padding:1.2rem 1.3rem;box-shadow:var(--sombra);position:relative;overflow:hidden;transition:transform var(--transicao),box-shadow var(--transicao)}
+.indicador:hover{transform:translateY(-5px) rotateX(3deg);box-shadow:var(--sombra-forte)}
+.indicador::before{content:'';position:absolute;inset:0 auto 0 0;width:6px;background:linear-gradient(180deg,var(--primaria),var(--acento))}
+.indicador__rotulo{font-size:.76rem;text-transform:uppercase;letter-spacing:.09em;font-weight:800;color:var(--texto-suave);margin-bottom:.35rem}
+.indicador__valor{font-family:var(--fonte-titulo);font-size:clamp(1.6rem,3.4vw,2.1rem);font-weight:700;color:var(--texto);line-height:1.1}
+.indicador__nota{font-size:.8rem;color:var(--texto-suave);margin-top:.2rem}
+.indicador--sucesso::before{background:linear-gradient(180deg,var(--sucesso),#7ed3ab)}
+.indicador--perigo::before{background:linear-gradient(180deg,var(--perigo),#e79aab)}
+.indicador--alerta::before{background:linear-gradient(180deg,var(--alerta),#f2cd8a)}
+
+.formulario{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.formulario .campo{margin:0}
+.formulario__acoes{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:.7rem;margin-top:.3rem}
+
+.tabela-envolucro{overflow-x:auto;border-radius:var(--raio-m);border:1px solid var(--borda)}
+table{width:100%;border-collapse:collapse;min-width:600px;font-size:.92rem}
+caption{text-align:left;padding:.7rem .9rem;font-size:.85rem;color:var(--texto-suave);font-style:italic}
+th,td{padding:.8rem .95rem;text-align:left;border-bottom:1px solid var(--borda)}
+th{background:var(--superficie-2);font-size:.76rem;text-transform:uppercase;letter-spacing:.07em;color:var(--texto-suave);font-weight:800;white-space:nowrap}
+tbody tr{transition:background var(--transicao)}
+tbody tr:hover{background:var(--superficie-2)}
+tbody tr:last-child td{border-bottom:none}
+
+.etiqueta{display:inline-block;padding:.25rem .7rem;border-radius:999px;font-size:.74rem;font-weight:800;letter-spacing:.04em;white-space:nowrap}
+.etiqueta--pendente{background:var(--alerta-suave);color:var(--alerta)}
+.etiqueta--enviado{background:var(--acento-suave);color:var(--acento)}
+.etiqueta--pago{background:var(--sucesso-suave);color:var(--sucesso)}
+.etiqueta--atrasado{background:var(--perigo-suave);color:var(--perigo)}
+.etiqueta--recorrente{background:var(--acento-suave);color:var(--acento);font-size:.7rem}
+
+.acoes-tabela{display:flex;gap:.4rem;flex-wrap:wrap}
+.acoes-envio{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.45rem}
+.vazio{text-align:center;padding:2.4rem 1rem;color:var(--texto-suave);font-style:italic;font-family:var(--fonte-titulo);font-size:1.1rem}
+
+/* ============================================================
+   7. CALENDÁRIO 3D
+   ============================================================ */
+.calendario{perspective:1500px;perspective-origin:50% 25%}
+.calendario__topo{display:flex;align-items:center;justify-content:space-between;gap:.8rem;margin-bottom:1.2rem;flex-wrap:wrap}
+.calendario__mes{font-family:var(--fonte-titulo);font-size:1.45rem;font-weight:700;color:var(--primaria);text-transform:capitalize;margin:0}
+.calendario__nav{display:flex;gap:.5rem}
+.calendario__cabecalho{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:.5rem;margin-bottom:.5rem}
+.calendario__cabecalho span{text-align:center;font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--texto-suave)}
+.calendario__grade{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:.5rem;transform-style:preserve-3d}
+.dia{position:relative;aspect-ratio:1/1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:2px;border:1.5px solid var(--borda);border-radius:var(--raio-m);background:linear-gradient(155deg,var(--superficie) 0%,var(--superficie-2) 100%);color:var(--texto);font-family:var(--fonte-texto);font-size:.95rem;font-weight:600;cursor:pointer;transform-style:preserve-3d;transition:transform .38s cubic-bezier(.2,.9,.3,1.25),box-shadow .38s,border-color .38s;box-shadow:0 4px 12px rgba(160,90,140,.09)}
+.dia:hover,.dia:focus-visible{transform:translateZ(28px) rotateX(-10deg) rotateY(9deg) scale(1.07);box-shadow:var(--sombra-forte);border-color:var(--primaria);z-index:3}
+.dia--fora{opacity:.32;pointer-events:none}
+.dia--hoje{border-color:var(--acento);box-shadow:0 0 0 3px var(--acento-suave),0 10px 22px rgba(140,100,190,.3);font-weight:800}
+.dia--selecionado{background:linear-gradient(155deg,var(--primaria),var(--acento));color:#fff;border-color:transparent}
+.dia__marcador{width:7px;height:7px;border-radius:50%;background:var(--primaria)}
+.dia__marcador--pago{background:var(--sucesso)}
+.dia__marcador--atrasado{background:var(--perigo)}
+.dia--selecionado .dia__marcador{background:#fff}
+.dia__ponto-duplo{display:flex;gap:3px}
+
+.legenda{display:flex;flex-wrap:wrap;gap:1rem;margin-top:1.2rem;font-size:.83rem;color:var(--texto-suave)}
+.legenda__item{display:flex;align-items:center;gap:.4rem}
+.legenda__cor{width:11px;height:11px;border-radius:50%}
+
+.detalhe-dia{margin-top:1.4rem}
+.detalhe-dia__titulo{font-family:var(--fonte-titulo);font-size:1.2rem;color:var(--acento);margin-bottom:.8rem}
+
+/* ============================================================
+   8. DOCUMENTOS
+   ============================================================ */
+.area-upload{border:2.5px dashed var(--borda);border-radius:var(--raio-g);padding:2.2rem 1.4rem;text-align:center;cursor:pointer;background:var(--superficie-2);transition:var(--transicao)}
+.area-upload:hover,.area-upload.arrastando{border-color:var(--primaria);background:var(--primaria-suave);transform:translateY(-3px);box-shadow:var(--sombra)}
+.area-upload__icone{font-size:2.6rem;display:block;margin-bottom:.6rem}
+.area-upload__texto{font-weight:700;color:var(--primaria);margin-bottom:.2rem}
+.area-upload__dica{font-size:.85rem;color:var(--texto-suave)}
+
+.lista-docs{list-style:none;margin:1.4rem 0 0;padding:0;display:grid;gap:.85rem}
+.doc{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;padding:1rem 1.1rem;background:var(--superficie-2);border:1px solid var(--borda);border-radius:var(--raio-m);transition:var(--transicao)}
+.doc:hover{border-color:var(--primaria);box-shadow:var(--sombra);transform:translateX(4px)}
+.doc__icone{width:46px;height:46px;flex:0 0 46px;display:grid;place-items:center;border-radius:var(--raio-p);background:var(--perigo-suave);color:var(--perigo);font-size:1.3rem;font-weight:800}
+.doc__info{flex:1;min-width:180px}
+.doc__nome{font-weight:700;word-break:break-word;display:block;margin-bottom:.15rem}
+.doc__meta{font-size:.8rem;color:var(--texto-suave)}
+.doc__acoes{display:flex;gap:.5rem;flex-wrap:wrap}
+
+/* ============================================================
+   9. GRÁFICOS
+   ============================================================ */
+.graficos{display:grid;gap:1.4rem;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.grafico-caixa{position:relative;width:100%;height:270px}
+.grafico-caixa canvas{width:100%;height:100%;display:block}
+
+/* ============================================================
+   10. NOTIFICAÇÕES / TOASTS
+   ============================================================ */
+.painel-notificacoes{position:absolute;top:calc(100% + .7rem);right:0;width:min(360px,88vw);max-height:60vh;overflow-y:auto;background:var(--superficie);border:1px solid var(--borda);border-radius:var(--raio-m);box-shadow:var(--sombra-forte);padding:.6rem;z-index:70}
+.painel-notificacoes[hidden]{display:none}
+.notificacao{padding:.8rem .9rem;border-radius:var(--raio-p);border-left:4px solid var(--alerta);background:var(--superficie-2);margin-bottom:.5rem}
+.notificacao:last-child{margin-bottom:0}
+.notificacao__titulo{font-weight:800;font-size:.92rem;display:block;margin-bottom:.15rem}
+.notificacao__texto{font-size:.83rem;color:var(--texto-suave);margin:0}
+
+#toasts{position:fixed;bottom:1.2rem;right:1.2rem;z-index:300;display:flex;flex-direction:column;gap:.65rem;max-width:min(380px,90vw)}
+.toast{display:flex;align-items:flex-start;gap:.7rem;padding:.95rem 1.1rem;background:var(--superficie);color:var(--texto);border:1px solid var(--borda);border-left:5px solid var(--acento);border-radius:var(--raio-m);box-shadow:var(--sombra-forte);font-size:.9rem;animation:toastEntrar .4s cubic-bezier(.2,.9,.3,1.2) both}
+@keyframes toastEntrar{from{opacity:0;transform:translateX(40px) scale(.95)}to{opacity:1;transform:none}}
+.toast.saindo{animation:toastSair .35s ease forwards}
+@keyframes toastSair{to{opacity:0;transform:translateX(40px) scale(.95)}}
+.toast--sucesso{border-left-color:var(--sucesso)}
+.toast--alerta{border-left-color:var(--alerta)}
+.toast--perigo{border-left-color:var(--perigo)}
+.toast__icone{font-size:1.15rem;line-height:1.3}
+
+/* ============================================================
+   11. MODAL
+   ============================================================ */
+.modal-fundo{position:fixed;inset:0;z-index:200;background:rgba(45,20,40,.55);backdrop-filter:blur(4px);display:grid;place-items:center;padding:1.2rem;animation:aparecer .25s ease both}
+.modal-fundo[hidden]{display:none}
+.modal{width:min(680px,100%);max-height:88vh;overflow:hidden;display:flex;flex-direction:column;background:var(--superficie);border:1px solid var(--borda);border-radius:var(--raio-g);box-shadow:var(--sombra-forte);animation:surgir .35s cubic-bezier(.2,.9,.3,1.1) both}
+.modal__topo{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.1rem 1.4rem;border-bottom:1px solid var(--borda)}
+.modal__topo h2{margin:0;font-size:1.25rem;color:var(--primaria)}
+.modal__corpo{padding:1.4rem;overflow-y:auto;flex:1}
+.modal__acoes{display:flex;flex-wrap:wrap;gap:.7rem;justify-content:flex-end;padding:1.1rem 1.4rem;border-top:1px solid var(--borda)}
+.modal__quadro{width:100%;height:60vh;border:none;border-radius:var(--raio-m);background:var(--fundo-alt)}
+
+/* ============================================================
+   12. ENVIO DE BOLETOS
+   ============================================================ */
+.canal-grade{display:grid;gap:1rem;margin:1rem 0;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.canal-opcao{display:flex;flex-direction:column;align-items:center;gap:.55rem;padding:1.3rem 1rem;cursor:pointer;background:var(--superficie-2);border:2px solid var(--borda);border-radius:var(--raio-m);text-align:center;transition:transform var(--transicao),border-color var(--transicao),background var(--transicao),box-shadow var(--transicao)}
+.canal-opcao:hover{transform:translateY(-4px);border-color:var(--primaria);background:var(--primaria-suave);box-shadow:var(--sombra)}
+.canal-opcao__icone{font-size:2rem;line-height:1}
+.canal-opcao__titulo{font-weight:800;color:var(--texto)}
+.canal-opcao__desc{font-size:.82rem;color:var(--texto-suave);margin:0}
+
+.previa-mensagem{width:100%;min-height:150px;resize:vertical;padding:.9rem 1rem;font-size:.9rem;line-height:1.55;background:var(--superficie-2);color:var(--texto);border:1.5px solid var(--borda);border-radius:var(--raio-m);font-family:var(--fonte-texto)}
+.previa-mensagem:focus{outline:none;border-color:var(--primaria);box-shadow:0 0 0 4px var(--primaria-suave)}
+
+.linha-info{display:flex;flex-wrap:wrap;gap:.4rem 1rem;align-items:center;padding:.7rem .9rem;border-radius:var(--raio-p);background:var(--superficie-2);border:1px solid var(--borda);margin-bottom:1rem;font-size:.9rem}
+.linha-info strong{color:var(--primaria)}
+
+.opcoes-extras{display:flex;flex-wrap:wrap;gap:1.1rem;margin-top:.9rem}
+.opcoes-extras label{display:flex;align-items:center;gap:.45rem;cursor:pointer;font-size:.9rem}
+.opcoes-extras input[type="checkbox"]{width:1.1rem;height:1.1rem;accent-color:var(--primaria)}
+
+/* ============================================================
+   13. RESPONSIVIDADE
+   ============================================================ */
+@media(max-width:640px){
+  .cartao-login{padding:1.4rem 1.2rem 1.1rem; width:min(340px,100%)}
+  .cartao-login__marca{font-size:1.5rem}
+  .cartao-login__sub{font-size:.8rem; margin-bottom:.9rem}
+  .calendario__grade,.calendario__cabecalho{gap:.3rem}
+  .dia{font-size:.8rem;border-radius:10px}
+  .dia__marcador{width:5px;height:5px}
+  #toasts{left:1rem;right:1rem;bottom:1rem;max-width:none}
+  .formulario{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}
+}
+@media print{
+  .cabecalho,.menu,.overlay,#toasts,.acoes-tabela,.btn,#modal,.area-upload{display:none!important}
+  body{background:#fff;color:#000}
+  .cartao{box-shadow:none;border:1px solid #ccc;page-break-inside:avoid}
+  .visao{display:none!important}
+  .visao.ativa{display:block!important}
+}
+</style>
+</head>
+<body>
+
+<a class="pular-link" href="#conteudo">Pular para o conteúdo principal</a>
+
+<!-- ============================ LOGIN ============================ -->
+<section class="tela-login" id="telaLogin" aria-labelledby="tituloLogin">
+  <button class="btn-icone tela-login__tema" data-acao="alternar-tema"
+          aria-label="Alternar entre tema claro e escuro">
+    <span id="iconeTemaLogin" aria-hidden="true">🌙</span>
+  </button>
+
+  <div class="cartao-login">
+    <span class="flor" aria-hidden="true">🌸</span>
+    <p class="cartao-login__marca" id="tituloLogin">Financeiro <span>Natália Dias</span></p>
+    <p class="cartao-login__sub">Gestão de Cobranças &amp; Vencimentos</p>
+
+    <form id="formLogin" novalidate>
+      <div class="campo">
+        <label for="campoUsuario">Usuário</label>
+        <input type="text" id="campoUsuario" autocomplete="username" required
+               placeholder="Digite seu nome de acesso">
+      </div>
+      <div class="campo">
+        <label for="campoSenha">Senha</label>
+        <input type="password" id="campoSenha" autocomplete="current-password"
+               required placeholder="Digite sua senha">
+      </div>
+      <p id="erroLogin" class="campo__ajuda" role="alert"
+         style="color:var(--perigo);font-weight:700;min-height:1.1em;text-align:center;font-size:.78rem;margin:0 0 .55rem 0;"></p>
+      <button type="submit" class="btn btn--primario btn--bloco">Entrar no sistema</button>
+    </form>
+
+    <!-- RODAPÉ COM A VERSÃO -->
+    <div class="cartao-login__rodape">
+      <span class="cartao-login__badge">✨ vitalício</span>
+      <span class="cartao-login__versao">versão <strong>1.0.0</strong></span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ APP ============================ -->
+<div id="app" hidden>
+
+  <header class="cabecalho">
+    <button class="btn-icone hamburguer" id="btnMenu"
+            aria-label="Abrir menu de opções" aria-expanded="false"
+            aria-controls="menuLateral">
+      <span class="hamburguer__linhas" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </span>
+    </button>
+
+    <h1 class="cabecalho__titulo">Financeiro Natália Dias</h1>
+
+    <div class="cabecalho__acoes">
+      <span class="cabecalho__usuario">Bem-vinda, Natália ✨</span>
+
+      <div style="position:relative">
+        <button class="btn-icone sino" id="btnSino"
+                aria-label="Notificações" aria-expanded="false"
+                aria-controls="painelNotificacoes">
+          <span aria-hidden="true">🔔</span>
+          <span class="sino__contador" id="sinoContador" hidden>0</span>
+        </button>
+        <div class="painel-notificacoes" id="painelNotificacoes" hidden
+             role="region" aria-label="Lista de notificações"></div>
+      </div>
+
+      <button class="btn-icone" data-acao="alternar-tema"
+              aria-label="Alternar entre tema claro e escuro">
+        <span id="iconeTemaApp" aria-hidden="true">🌙</span>
+      </button>
+
+      <button class="btn-icone" data-acao="sair" aria-label="Sair do sistema">
+        <span aria-hidden="true">🚪</span>
+      </button>
+    </div>
+  </header>
+
+  <nav class="menu" id="menuLateral" aria-label="Menu principal" aria-hidden="true">
+    <div class="menu__topo">
+      <span class="menu__marca">Financeiro<small>Natália Dias</small></span>
+      <button class="btn-icone" data-acao="fechar-menu" aria-label="Fechar menu">
+        <span aria-hidden="true">✕</span>
+      </button>
+    </div>
+    <ul class="menu__lista">
+      <li class="menu__item"><button class="menu__botao" data-acao="ir-visao" data-visao="painel" aria-current="page"><span class="menu__icone" aria-hidden="true">📊</span> Painel &amp; Gráficos</button></li>
+      <li class="menu__item"><button class="menu__botao" data-acao="ir-visao" data-visao="clientes"><span class="menu__icone" aria-hidden="true">👩‍💼</span> Cadastro de Cliente</button></li>
+      <li class="menu__item"><button class="menu__botao" data-acao="ir-visao" data-visao="vencimentos"><span class="menu__icone" aria-hidden="true">📅</span> Cadastro de Vencimento</button></li>
+      <li class="menu__item"><button class="menu__botao" data-acao="ir-visao" data-visao="envios"><span class="menu__icone" aria-hidden="true">📤</span> Envio de Boletos</button></li>
+      <li class="menu__item"><button class="menu__botao" data-acao="ir-visao" data-visao="documentos"><span class="menu__icone" aria-hidden="true">📎</span> Upload de Documentos</button></li>
+      <li class="menu__item"><button class="menu__botao" data-acao="ir-visao" data-visao="relatorios"><span class="menu__icone" aria-hidden="true">🗂️</span> Gerenciador de Relatórios</button></li>
+      <li class="menu__item"><button class="menu__botao" data-acao="ir-visao" data-visao="calendario"><span class="menu__icone" aria-hidden="true">🗓️</span> Calendário 3D</button></li>
+      <li class="menu__item"><button class="menu__botao" data-acao="ir-visao" data-visao="backup"><span class="menu__icone" aria-hidden="true">💾</span> Backup &amp; Segurança</button></li>
+    </ul>
+    <div class="menu__rodape">
+      <p style="margin:0 0 .4rem"><strong>Acesso vitalício</strong> · Natália</p>
+      <p style="margin:0 0 .2rem" id="infoBackup">Backup automático ativo (a cada 1 hora).</p>
+      <p style="margin:0;font-size:.72rem;color:var(--acento)">versão <strong>1.0.0</strong></p>
+    </div>
+  </nav>
+
+  <div class="overlay" id="overlay" tabindex="-1" aria-hidden="true"></div>
+
+  <main class="conteudo" id="conteudo" tabindex="-1">
+
+    <!-- PAINEL -->
+    <section class="visao ativa" id="visao-painel" aria-labelledby="tituloPainel">
+      <div class="titulo-visao">
+        <h2 id="tituloPainel">Painel de Controle</h2>
+        <p>Visão geral das suas cobranças</p>
+      </div>
+      <div class="indicadores" id="indicadores"></div>
+      <div class="graficos">
+        <div class="cartao">
+          <h3 class="cartao__titulo"><span aria-hidden="true">📈</span> Cobranças por mês</h3>
+          <div class="grafico-caixa">
+            <canvas id="graficoBarras" role="img" aria-label="Gráfico de barras com valores mensais"></canvas>
+          </div>
+          <p class="campo__ajuda" id="resumoBarras"></p>
+        </div>
+        <div class="cartao">
+          <h3 class="cartao__titulo"><span aria-hidden="true">🍩</span> Situação das cobranças</h3>
+          <div class="grafico-caixa">
+            <canvas id="graficoRosca" role="img" aria-label="Gráfico de rosca por situação"></canvas>
+          </div>
+          <p class="campo__ajuda" id="resumoRosca"></p>
+        </div>
+      </div>
+      <div class="cartao">
+        <h3 class="cartao__titulo"><span aria-hidden="true">⏰</span> Próximos vencimentos</h3>
+        <div id="proximosVencimentos"></div>
+      </div>
+    </section>
+
+    <!-- CLIENTES -->
+    <section class="visao" id="visao-clientes" aria-labelledby="tituloClientes">
+      <div class="titulo-visao">
+        <h2 id="tituloClientes">Cadastro de Cliente</h2>
+        <p>Registre e mantenha os dados das suas clientes</p>
+      </div>
+
+      <div class="cartao">
+        <h3 class="cartao__titulo"><span aria-hidden="true">✍️</span> <span id="rotuloFormCliente">Nova cliente</span></h3>
+        <form class="formulario" id="formCliente" novalidate>
+          <input type="hidden" id="clienteId">
+          <div class="campo">
+            <label for="clienteNome">Nome completo *</label>
+            <input type="text" id="clienteNome" required autocomplete="name">
+          </div>
+          <div class="campo">
+            <label for="clienteEmail">E-mail</label>
+            <input type="email" id="clienteEmail" autocomplete="email">
+          </div>
+          <div class="campo">
+            <label for="clienteTelefone">Telefone / WhatsApp</label>
+            <input type="tel" id="clienteTelefone" autocomplete="tel" placeholder="(00) 00000-0000">
+            <p class="campo__ajuda">Informe o DDD — usado no envio via WhatsApp.</p>
+          </div>
+          <div class="campo">
+            <label for="clienteDocumento">CPF ou CNPJ</label>
+            <input type="text" id="clienteDocumento" inputmode="numeric">
+          </div>
+          <div class="campo">
+            <label for="clientePrefContato">Preferência de envio do boleto</label>
+            <select id="clientePrefContato">
+              <option value="whatsapp">WhatsApp</option>
+              <option value="email">E-mail</option>
+              <option value="ambos">WhatsApp e E-mail</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label for="clienteDiaEnvio">Dia do mês para envio mensal</label>
+            <input type="number" id="clienteDiaEnvio" min="1" max="28" value="5">
+            <p class="campo__ajuda">Lembrete recorrente no mês seguinte (1 a 28).</p>
+          </div>
+          <div class="formulario__acoes">
+            <button type="submit" class="btn btn--primario">Salvar cliente</button>
+            <button type="button" class="btn btn--suave" data-acao="limpar-cliente">Limpar formulário</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="cartao">
+        <h3 class="cartao__titulo"><span aria-hidden="true">📋</span> Clientes cadastrados</h3>
+        <div id="listaClientes"></div>
+      </div>
+    </section>
+
+    <!-- VENCIMENTOS -->
+    <section class="visao" id="visao-vencimentos" aria-labelledby="tituloVencimentos">
+      <div class="titulo-visao">
+        <h2 id="tituloVencimentos">Cadastro de Vencimento</h2>
+        <p>Programe as datas e receba alertas 3 dias antes</p>
+      </div>
+
+      <div class="cartao">
+        <h3 class="cartao__titulo"><span aria-hidden="true">🗓️</span> <span id="rotuloFormVenc">Novo vencimento</span></h3>
+        <form class="formulario" id="formVencimento" novalidate>
+          <input type="hidden" id="vencimentoId">
+          <div class="campo">
+            <label for="vencimentoCliente">Cliente *</label>
+            <select id="vencimentoCliente" required></select>
+          </div>
+          <div class="campo">
+            <label for="vencimentoDescricao">Descrição da cobrança *</label>
+            <input type="text" id="vencimentoDescricao" required placeholder="Ex.: Mensalidade de agosto">
+          </div>
+          <div class="campo">
+            <label for="vencimentoValor">Valor (R$) *</label>
+            <input type="number" id="vencimentoValor" min="0" step="0.01" required inputmode="decimal">
+          </div>
+          <div class="campo">
+            <label for="vencimentoData">Data de vencimento *</label>
+            <input type="date" id="vencimentoData" required>
+          </div>
+          <div class="campo">
+            <label for="vencimentoStatus">Situação</label>
+            <select id="vencimentoStatus">
+              <option value="pendente">Pendente</option>
+              <option value="enviado">Boleto enviado</option>
+              <option value="pago">Pago</option>
+            </select>
+          </div>
+          <div class="formulario__acoes">
+            <button type="submit" class="btn btn--primario">Salvar vencimento</button>
+            <button type="button" class="btn btn--suave" data-acao="limpar-vencimento">Limpar formulário</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="cartao">
+        <h3 class="cartao__titulo"><span aria-hidden="true">📌</span> Vencimentos cadastrados</h3>
+        <div id="listaVencimentos"></div>
+      </div>
+    </section>
+
+    <!-- ENVIOS -->
+    <section class="visao" id="visao-envios" aria-labelledby="tituloEnvios">
+      <div class="titulo-visao">
+        <h2 id="tituloEnvios">Envio de Boletos</h2>
+        <p>Acompanhe, envie e reagende cobranças por WhatsApp ou e-mail</p>
+      </div>
+
+      <div class="cartao">
+        <h3 class="cartao__titulo"><span aria-hidden="true">📤</span> Cobranças prontas para envio</h3>
+        <div id="listaEnvios"></div>
+      </div>
+    </section>
+
+    <!-- DOCUMENTOS -->
+    <section class="visao" id="visao-documentos" aria-labelledby="tituloDocumentos">
+      <div class="titulo-visao">
+        <h2 id="tituloDocumentos">Upload de Documentos</h2>
+        <p>Anexe boletos e contratos em PDF</p>
+      </div>
+      <div class="cartao">
+        <div class="area-upload" id="areaUpload" role="button" tabindex="0"
+             aria-label="Selecionar ou arrastar arquivos PDF">
+          <span class="area-upload__icone" aria-hidden="true">📄</span>
+          <p class="area-upload__texto">Clique aqui ou arraste os arquivos PDF</p>
+          <p class="area-upload__dica">Somente arquivos .pdf · até 8 MB cada</p>
+        </div>
+        <input type="file" id="inputArquivo" accept="application/pdf,.pdf" multiple
+               class="apenas-leitor" aria-label="Selecionar arquivos PDF">
+        <div class="campo" style="margin-top:1.2rem;max-width:340px">
+          <label for="docCliente">Vincular ao cliente (opcional)</label>
+          <select id="docCliente"><option value="">— Sem vínculo —</option></select>
+        </div>
+      </div>
+      <div class="cartao">
+        <h3 class="cartao__titulo"><span aria-hidden="true">🗂️</span> Documentos anexados</h3>
+        <ul class="lista-docs" id="listaDocumentos"></ul>
+      </div>
+    </section>
+
+    <!-- RELATÓRIOS -->
+    <section class="visao" id="visao-relatorios" aria-labelledby="tituloRelatorios">
+      <div class="titulo-visao">
+        <h2 id="tituloRelatorios">Gerenciador de Relatórios</h2>
+        <p>Filtre, exporte e imprima informações de cobrança</p>
+      </div>
+
+      <div class="cartao">
+        <h3 class="cartao__titulo"><span aria-hidden="true">🔎</span> Filtros</h3>
+        <form class="formulario" id="formFiltros" novalidate>
+          <div class="campo">
+            <label for="filtroCliente">Cliente</label>
+            <select id="filtroCliente"><option value="">Todos os clientes</option></select>
+          </div>
+          <div class="campo">
+            <label for="filtroStatus">Situação</label>
+            <select id="filtroStatus">
+              <option value="">Todas as situações</option>
+              <option value="pendente">Pendente</option>
+              <option value="enviado">Boleto enviado</option>
+              <option value="pago">Pago</option>
+              <option value="atrasado">Atrasado</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label for="filtroInicio">Vencimento a partir de</label>
+            <input type="date" id="filtroInicio">
+          </div>
+          <div class="campo">
+            <label for="filtroFim">Vencimento até</label>
+            <input type="date" id="filtroFim">
+          </div>
+          <div class="formulario__acoes">
+            <button type="submit" class="btn btn--primario">Aplicar filtros</button>
+            <button type="button" class="btn btn--suave" data-acao="limpar-filtros">Limpar filtros</button>
+            <button type="button" class="btn btn--fantasma" data-acao="exportar-csv">⬇️ Exportar CSV</button>
+            <button type="button" class="btn btn--fantasma" data-acao="imprimir">🖨️ Imprimir</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="cartao">
+        <h3 class="cartao__titulo"><span aria-hidden="true">📑</span> Resultado</h3>
+        <div id="resumoRelatorio" class="indicadores" style="margin-bottom:1.2rem"></div>
+        <div id="tabelaRelatorio"></div>
+      </div>
+    </section>
+
+    <!-- CALENDÁRIO -->
+    <section class="visao" id="visao-calendario" aria-labelledby="tituloCalendario">
+      <div class="titulo-visao">
+        <h2 id="tituloCalendario">Calendário de Acompanhamento</h2>
+        <p>Toque em um dia para ver os detalhes das cobranças</p>
+      </div>
+      <div class="cartao">
+        <div class="calendario">
+          <div class="calendario__topo">
+            <h3 class="calendario__mes" id="mesCalendario" aria-live="polite"></h3>
+            <div class="calendario__nav">
+              <button class="btn-icone" data-acao="mes-anterior" aria-label="Mês anterior">‹</button>
+              <button class="btn btn--suave btn--pequeno" data-acao="mes-hoje">Hoje</button>
+              <button class="btn-icone" data-acao="mes-seguinte" aria-label="Próximo mês">›</button>
+            </div>
+          </div>
+          <div class="calendario__cabecalho" aria-hidden="true">
+            <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span>
+            <span>Qui</span><span>Sex</span><span>Sáb</span>
+          </div>
+          <div class="calendario__grade" id="gradeCalendario" role="grid" aria-label="Dias do mês"></div>
+        </div>
+        <div class="legenda">
+          <span class="legenda__item"><span class="legenda__cor" style="background:var(--primaria)"></span> Pendente</span>
+          <span class="legenda__item"><span class="legenda__cor" style="background:var(--sucesso)"></span> Pago</span>
+          <span class="legenda__item"><span class="legenda__cor" style="background:var(--perigo)"></span> Atrasado</span>
+          <span class="legenda__item"><span class="legenda__cor" style="background:var(--acento)"></span> Hoje</span>
+        </div>
+      </div>
+      <div class="cartao detalhe-dia">
+        <h3 class="detalhe-dia__titulo" id="tituloDetalheDia">Selecione um dia no calendário</h3>
+        <div id="detalheDia"></div>
+      </div>
+    </section>
+
+    <!-- BACKUP -->
+    <section class="visao" id="visao-backup" aria-labelledby="tituloBackup">
+      <div class="titulo-visao">
+        <h2 id="tituloBackup">Backup &amp; Segurança</h2>
+        <p>Proteja as informações do seu sistema</p>
+      </div>
+      <div class="cartao">
+        <h3 class="cartao__titulo"><span aria-hidden="true">💾</span> Situação dos backups</h3>
+        <div class="indicadores">
+          <div class="indicador">
+            <p class="indicador__rotulo">Último backup automático</p>
+            <p class="indicador__valor" id="infoUltimoBackup" style="font-size:1.15rem">—</p>
+            <p class="indicador__nota">Executado a cada 1 hora</p>
+          </div>
+          <div class="indicador indicador--sucesso">
+            <p class="indicador__rotulo">Registros protegidos</p>
+            <p class="indicador__valor" id="infoRegistros">0</p>
+            <p class="indicador__nota">Clientes, vencimentos e documentos</p>
+          </div>
+        </div>
+        <div class="formulario__acoes">
+          <button class="btn btn--primario" data-acao="exportar-backup">⬇️ Baixar backup completo</button>
+          <button class="btn btn--fantasma" data-acao="importar-backup">⬆️ Restaurar backup</button>
+          <button class="btn btn--suave" data-acao="backup-agora">🔄 Fazer backup agora</button>
+        </div>
+        <input type="file" id="inputBackup" accept="application/json,.json" class="apenas-leitor"
+               aria-label="Selecionar arquivo de backup JSON">
+      </div>
+      <div class="cartao">
+        <h3 class="cartao__titulo"><span aria-hidden="true">🔐</span> Boas práticas</h3>
+        <ul style="margin:0;padding-left:1.2rem;color:var(--texto-suave)">
+          <li>Um backup automático é gravado neste navegador a cada hora.</li>
+          <li>Ao sair do sistema, você poderá baixar uma cópia dos seus dados.</li>
+          <li>Guarde o arquivo de backup em local seguro (nuvem ou pendrive).</li>
+          <li>Os documentos PDF ficam armazenados localmente no seu navegador.</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- MODAL -->
+<div class="modal-fundo" id="modal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+    <div class="modal__topo">
+      <h2 id="modalTitulo">Título</h2>
+      <button class="btn-icone" data-acao="fechar-modal" aria-label="Fechar janela">
+        <span aria-hidden="true">✕</span>
+      </button>
+    </div>
+    <div class="modal__corpo" id="modalCorpo"></div>
+    <div class="modal__acoes" id="modalAcoes"></div>
+  </div>
+</div>
+
+<div id="toasts" aria-live="polite" aria-atomic="false"></div>
+
+<script>
+"use strict";
+
+/* ============================================================
+   UTILITÁRIOS
+   ============================================================ */
+const $  = (sel, ctx = document) => ctx.querySelector(sel);
+const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+
+const VERSAO_SISTEMA = '1.0.0';
+
+const NOMES_MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+                     'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const NOMES_DIAS  = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira',
+                     'Quinta-feira','Sexta-feira','Sábado'];
+
+function escaparHTML(txt){
+  return String(txt ?? '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function formatarMoeda(valor){
+  return Number(valor || 0).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+}
+function formatarDataBR(iso){
+  if(!iso) return '—';
+  const [a, m, d] = iso.split('-');
+  return `${d}/${m}/${a}`;
+}
+function paraISO(data){
+  const a = data.getFullYear();
+  const m = String(data.getMonth() + 1).padStart(2, '0');
+  const d = String(data.getDate()).padStart(2, '0');
+  return `${a}-${m}-${d}`;
+}
+function hojeISO(){ return paraISO(new Date()); }
+function diferencaDias(a, b){
+  const [a1,a2,a3] = a.split('-').map(Number);
+  const [b1,b2,b3] = b.split('-').map(Number);
+  return Math.round((Date.UTC(a1,a2-1,a3) - Date.UTC(b1,b2-1,b3)) / 86400000);
+}
+function formatarTamanho(bytes){
+  if(bytes < 1024) return bytes + ' B';
+  if(bytes < 1048576) return (bytes/1024).toFixed(1) + ' KB';
+  return (bytes/1048576).toFixed(2) + ' MB';
+}
+function formatarDataHora(ts){
+  if(!ts) return '—';
+  return new Date(ts).toLocaleString('pt-BR');
+}
+function limparTelefone(tel){
+  return String(tel || '').replace(/\D/g, '');
+}
+
+/* ============================================================
+   TEMA
+   ============================================================ */
+const CHAVE_TEMA = 'nat_cobranca_tema';
+function aplicarTema(tema){
+  document.documentElement.setAttribute('data-tema', tema);
+  const icone = tema === 'escuro' ? '☀️' : '🌙';
+  const a = $('#iconeTemaApp');  if(a) a.textContent = icone;
+  const b = $('#iconeTemaLogin'); if(b) b.textContent = icone;
+  try{ localStorage.setItem(CHAVE_TEMA, tema); }catch(e){}
+}
+function alternarTema(){
+  const atual = document.documentElement.getAttribute('data-tema');
+  aplicarTema(atual === 'escuro' ? 'claro' : 'escuro');
+  if(!$('#app').hidden) renderTudo();
+}
+(function(){
+  let tema = 'claro';
+  try{
+    const salvo = localStorage.getItem(CHAVE_TEMA);
+    if(salvo) tema = salvo;
+    else if(window.matchMedia('(prefers-color-scheme: dark)').matches) tema = 'escuro';
+  }catch(e){}
+  aplicarTema(tema);
+})();
+
+/* ============================================================
+   INDEXEDDB (PDFs)
+   ============================================================ */
+const BD_NOME = 'nat_cobranca_arquivos';
+const BD_LOJA = 'pdfs';
+
+function abrirBD(){
+  return new Promise((resolver, rejeitar) => {
+    if(!('indexedDB' in window)) return rejeitar(new Error('IndexedDB indisponível'));
+    const req = indexedDB.open(BD_NOME, 1);
+    req.onupgradeneeded = () => {
+      const bd = req.result;
+      if(!bd.objectStoreNames.contains(BD_LOJA)) bd.createObjectStore(BD_LOJA);
+    };
+    req.onsuccess = () => resolver(req.result);
+    req.onerror   = () => rejeitar(req.error);
+  });
+}
+async function bdGuardar(id, blob){
+  const bd = await abrirBD();
+  return new Promise((res, rej) => {
+    const tx = bd.transaction(BD_LOJA, 'readwrite');
+    tx.objectStore(BD_LOJA).put(blob, id);
+    tx.oncomplete = () => res();
+    tx.onerror = () => rej(tx.error);
+  });
+}
+async function bdObter(id){
+  const bd = await abrirBD();
+  return new Promise((res, rej) => {
+    const tx = bd.transaction(BD_LOJA, 'readonly');
+    const r = tx.objectStore(BD_LOJA).get(id);
+    r.onsuccess = () => res(r.result);
+    r.onerror   = () => rej(r.error);
+  });
+}
+async function bdExcluir(id){
+  const bd = await abrirBD();
+  return new Promise((res, rej) => {
+    const tx = bd.transaction(BD_LOJA, 'readwrite');
+    tx.objectStore(BD_LOJA).delete(id);
+    tx.oncomplete = () => res();
+    tx.onerror = () => rej(tx.error);
+  });
+}
+
+/* ============================================================
+   ESTADO / PERSISTÊNCIA
+   ============================================================ */
+const CHAVE_DADOS  = 'nat_cobranca_dados_v1';
+const CHAVE_BACKUP = 'nat_cobranca_backup_auto_v1';
+
+let estado = {
+  clientes: [], vencimentos: [], documentos: [],
+  ultimoBackup: null, notificados: {}
+};
+
+function carregarDados(){
+  try{
+    const bruto = localStorage.getItem(CHAVE_DADOS);
+    if(bruto){
+      const obj = JSON.parse(bruto);
+      estado.clientes    = Array.isArray(obj.clientes)    ? obj.clientes    : [];
+      estado.vencimentos = Array.isArray(obj.vencimentos) ? obj.vencimentos : [];
+      estado.documentos  = Array.isArray(obj.documentos)  ? obj.documentos  : [];
+      estado.ultimoBackup = obj.ultimoBackup || null;
+      estado.notificados = obj.notificados || {};
+    }
+  }catch(e){ console.warn('Erro ao carregar dados:', e); }
+}
+function salvarDados(){
+  try{ localStorage.setItem(CHAVE_DADOS, JSON.stringify(estado)); }
+  catch(e){
+    console.warn('Falha ao salvar:', e);
+    notificar('Não foi possível salvar. O armazenamento pode estar cheio.', 'perigo', 8000);
+  }
+}
+
+/* ============================================================
+   BACKUP
+   ============================================================ */
+function montarPacoteBackup(){
+  return {
+    aplicacao: 'Financeiro Natália Dias',
+    versao: VERSAO_SISTEMA,
+    geradoEm: new Date().toISOString(),
+    dados: {
+      clientes: estado.clientes,
+      vencimentos: estado.vencimentos,
+      documentos: estado.documentos,
+      notificados: estado.notificados
+    }
+  };
+}
+function salvarBackupAutomatico(silencioso = true){
+  try{
+    const pacote = montarPacoteBackup();
+    localStorage.setItem(CHAVE_BACKUP, JSON.stringify({quando: Date.now(), conteudo: pacote}));
+    estado.ultimoBackup = Date.now();
+    salvarDados();
+    atualizarInfoBackup();
+    if(!silencioso) notificar('Backup automático realizado com sucesso.', 'sucesso');
+    return true;
+  }catch(e){
+    console.warn('Falha no backup:', e);
+    if(!silencioso) notificar('Não foi possível gravar o backup.', 'perigo');
+    return false;
+  }
+}
+function baixarBackup(){
+  const pacote = montarPacoteBackup();
+  const blob = new Blob([JSON.stringify(pacote, null, 2)], {type:'application/json;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `backup-financeiro-natalia-dias-${paraISO(new Date())}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+  notificar('Backup baixado. Guarde o arquivo em local seguro.', 'sucesso', 6000);
+}
+function restaurarBackup(arquivo){
+  const leitor = new FileReader();
+  leitor.onload = () => {
+    try{
+      const obj = JSON.parse(leitor.result);
+      const d = obj.dados || obj;
+      if(!d || (!Array.isArray(d.clientes) && !Array.isArray(d.vencimentos))) throw new Error('Formato inválido');
+      estado.clientes    = Array.isArray(d.clientes)    ? d.clientes    : [];
+      estado.vencimentos = Array.isArray(d.vencimentos) ? d.vencimentos : [];
+      estado.documentos  = Array.isArray(d.documentos)  ? d.documentos  : [];
+      estado.notificados = d.notificados || {};
+      salvarDados();
+      renderTudo();
+      notificar('Backup restaurado com sucesso!', 'sucesso', 6000);
+    }catch(e){
+      notificar('Arquivo de backup inválido ou corrompido.', 'perigo', 7000);
+    }
+  };
+  leitor.readAsText(arquivo);
+}
+function atualizarInfoBackup(){
+  const alvo = $('#infoUltimoBackup');
+  if(alvo) alvo.textContent = estado.ultimoBackup ? formatarDataHora(estado.ultimoBackup) : 'Nenhum ainda';
+  const reg = $('#infoRegistros');
+  if(reg){
+    reg.textContent = String(estado.clientes.length + estado.vencimentos.length + estado.documentos.length);
+  }
+  const info = $('#infoBackup');
+  if(info){
+    info.textContent = estado.ultimoBackup
+      ? `Último backup: ${formatarDataHora(estado.ultimoBackup)}`
+      : 'Backup automático ativo (a cada 1 hora).';
+  }
+}
+let temporizadorBackup = null;
+function iniciarBackupAutomatico(){
+  if(temporizadorBackup) clearInterval(temporizadorBackup);
+  temporizadorBackup = setInterval(() => salvarBackupAutomatico(false), 3600000);
+  if(!estado.ultimoBackup || (Date.now() - estado.ultimoBackup) > 3600000){
+    salvarBackupAutomatico(true);
+  }
+}
+window.addEventListener('beforeunload', () => {
+  salvarDados();
+  salvarBackupAutomatico(true);
+});
+
+/* ============================================================
+   NOTIFICAÇÕES (TOASTS)
+   ============================================================ */
+function notificar(mensagem, tipo = 'info', duracao = 5200){
+  const cont = $('#toasts');
+  if(!cont) return;
+  const icones = {info:'💬', sucesso:'✅', alerta:'⚠️', perigo:'⛔'};
+  const el = document.createElement('div');
+  el.className = `toast toast--${tipo}`;
+  el.setAttribute('role', tipo === 'perigo' ? 'alert' : 'status');
+  el.innerHTML = `<span class="toast__icone" aria-hidden="true">${icones[tipo] || '💬'}</span>
+                  <span>${escaparHTML(mensagem)}</span>`;
+  cont.appendChild(el);
+  setTimeout(() => {
+    el.classList.add('saindo');
+    setTimeout(() => el.remove(), 400);
+  }, duracao);
+}
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+let elementoFocadoAntes = null;
+function abrirModal(titulo, corpoHTML, acoesHTML){
+  const modal = $('#modal');
+  elementoFocadoAntes = document.activeElement;
+  $('#modalTitulo').textContent = titulo;
+  $('#modalCorpo').innerHTML = corpoHTML;
+  $('#modalAcoes').innerHTML = acoesHTML || '';
+  modal.hidden = false;
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => {
+    const foco = modal.querySelector('button, [href], input, select, textarea, iframe');
+    if(foco) foco.focus();
+  }, 60);
+}
+function fecharModal(){
+  const modal = $('#modal');
+  const iframe = modal.querySelector('iframe');
+  if(iframe && iframe.src.startsWith('blob:')) URL.revokeObjectURL(iframe.src);
+  modal.hidden = true;
+  document.body.style.overflow = '';
+  if(elementoFocadoAntes && elementoFocadoAntes.focus) elementoFocadoAntes.focus();
+}
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape'){
+    if(!$('#modal').hidden){ fecharModal(); return; }
+    if($('#menuLateral').classList.contains('aberto')) fecharMenu();
+    const painel = $('#painelNotificacoes');
+    if(painel && !painel.hidden) painel.hidden = true;
+  }
+});
+
+/* ============================================================
+   LOGIN
+   ============================================================ */
+const USUARIO_VALIDO = 'natalia';
+const SENHA_VALIDA   = '1234@';
+
+function normalizarUsuario(txt){
+  return String(txt || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
+}
+
+$('#formLogin').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const usuario = normalizarUsuario($('#campoUsuario').value);
+  const senha   = $('#campoSenha').value;
+  const erro    = $('#erroLogin');
+  if(!usuario || !senha){ erro.textContent = 'Preencha o usuário e a senha.'; return; }
+  if(usuario === USUARIO_VALIDO && senha === SENHA_VALIDA){
+    erro.textContent = '';
+    try{ sessionStorage.setItem('nat_sessao', 'ativa'); }catch(e){}
+    entrarNoSistema();
+  }else{
+    erro.textContent = 'Usuário ou senha incorretos. Tente novamente.';
+    $('#campoSenha').value = '';
+    $('#campoSenha').focus();
+  }
+});
+
+function entrarNoSistema(){
+  const login = $('#telaLogin');
+  const app   = $('#app');
+
+  login.hidden = true;
+  login.style.display = 'none';
+  login.setAttribute('aria-hidden', 'true');
+
+  app.hidden = false;
+  app.style.display = 'block';
+  app.removeAttribute('aria-hidden');
+
+  carregarDados();
+  renderTudo();
+  atualizarInfoBackup();
+  iniciarBackupAutomatico();
+  setTimeout(verificarNotificacoes, 900);
+  setTimeout(() => $('#btnMenu').focus(), 200);
+
+  window.scrollTo({top:0, behavior:'auto'});
+}
+
+function sairDoSistema(){
+  salvarDados();
+  salvarBackupAutomatico(true);
+  try{ sessionStorage.removeItem('nat_sessao'); }catch(e){}
+  if(temporizadorBackup) clearInterval(temporizadorBackup);
+
+  const app   = $('#app');
+  const login = $('#telaLogin');
+
+  app.hidden = true;
+  app.style.display = 'none';
+  app.setAttribute('aria-hidden', 'true');
+
+  login.hidden = false;
+  login.style.display = 'grid';
+  login.removeAttribute('aria-hidden');
+
+  $('#campoUsuario').value = '';
+  $('#campoSenha').value = '';
+  $('#erroLogin').textContent = '';
+  window.scrollTo({top:0, behavior:'auto'});
+  $('#campoUsuario').focus();
+}
+
+/* ============================================================
+   NAVEGAÇÃO
+   ============================================================ */
+let visaoAtual = 'painel';
+function abrirMenu(){
+  const menu = $('#menuLateral');
+  menu.classList.add('aberto');
+  menu.setAttribute('aria-hidden', 'false');
+  $('#overlay').classList.add('ativo');
+  $('#btnMenu').setAttribute('aria-expanded', 'true');
+  const primeiro = menu.querySelector('button');
+  if(primeiro) setTimeout(() => primeiro.focus(), 300);
+}
+function fecharMenu(){
+  const menu = $('#menuLateral');
+  menu.classList.remove('aberto');
+  menu.setAttribute('aria-hidden', 'true');
+  $('#overlay').classList.remove('ativo');
+  $('#btnMenu').setAttribute('aria-expanded', 'false');
+  $('#btnMenu').focus();
+}
+function irParaVisao(nome){
+  visaoAtual = nome;
+  $$('.visao').forEach(v => v.classList.toggle('ativa', v.id === 'visao-' + nome));
+  $$('.menu__botao').forEach(b => {
+    if(b.dataset.visao === nome) b.setAttribute('aria-current', 'page');
+    else b.removeAttribute('aria-current');
+  });
+  $('#conteudo').focus();
+  window.scrollTo({top:0, behavior:'smooth'});
+
+  if(nome === 'painel')      renderGraficos();
+  if(nome === 'calendario')  renderCalendario();
+  if(nome === 'relatorios')  renderRelatorios();
+  if(nome === 'backup')      atualizarInfoBackup();
+  if(nome === 'envios')      renderEnvios();
+}
+
+/* ============================================================
+   RENDER GERAL
+   ============================================================ */
+function renderTudo(){
+  renderIndicadores();
+  renderClientes();
+  renderSelectsClientes();
+  renderVencimentos();
+  renderEnvios();
+  renderDocumentos();
+  renderRelatorios();
+  renderCalendario();
+  renderProximosVencimentos();
+  renderGraficos();
+  atualizarInfoBackup();
+  atualizarSino();
+}
+
+function calcularResumo(){
+  const hoje = hojeISO();
+  const pendentes = estado.vencimentos.filter(v => v.status !== 'pago');
+  const pagos     = estado.vencimentos.filter(v => v.status === 'pago');
+  const atrasados = pendentes.filter(v => diferencaDias(v.data, hoje) < 0);
+  return {
+    totalClientes: estado.clientes.length,
+    pendentes: pendentes.length,
+    pagos: pagos.length,
+    atrasados: atrasados.length,
+    valorPendente: pendentes.reduce((s,v) => s + Number(v.valor||0), 0),
+    valorPago:     pagos.reduce((s,v) => s + Number(v.valor||0), 0),
+    valorAtrasado: atrasados.reduce((s,v) => s + Number(v.valor||0), 0)
+  };
+}
+
+function renderIndicadores(){
+  const r = calcularResumo();
+  const alvo = $('#indicadores');
+  if(!alvo) return;
+  const agora = new Date();
+  const enviadosMes = estado.vencimentos.filter(v => {
+    if(!v.enviadoEm) return false;
+    const d = new Date(v.enviadoEm);
+    return d.getMonth() === agora.getMonth() && d.getFullYear() === agora.getFullYear();
+  }).length;
+
+  alvo.innerHTML = `
+    <article class="indicador">
+      <p class="indicador__rotulo">Clientes</p>
+      <p class="indicador__valor">${r.totalClientes}</p>
+      <p class="indicador__nota">cadastrados no sistema</p>
+    </article>
+    <article class="indicador indicador--alerta">
+      <p class="indicador__rotulo">A receber</p>
+      <p class="indicador__valor">${formatarMoeda(r.valorPendente)}</p>
+      <p class="indicador__nota">${r.pendentes} cobrança(s) em aberto</p>
+    </article>
+    <article class="indicador indicador--sucesso">
+      <p class="indicador__rotulo">Recebido</p>
+      <p class="indicador__valor">${formatarMoeda(r.valorPago)}</p>
+      <p class="indicador__nota">${r.pagos} cobrança(s) quitada(s)</p>
+    </article>
+    <article class="indicador indicador--perigo">
+      <p class="indicador__rotulo">Em atraso</p>
+      <p class="indicador__valor">${formatarMoeda(r.valorAtrasado)}</p>
+      <p class="indicador__nota">${r.atrasados} cobrança(s) vencida(s)</p>
+    </article>
+    <article class="indicador indicador--alerta">
+      <p class="indicador__rotulo">Enviados este mês</p>
+      <p class="indicador__valor">${enviadosMes}</p>
+      <p class="indicador__nota">boletos despachados no mês</p>
+    </article>`;
+}
+
+function nomeCliente(id){
+  const c = estado.clientes.find(x => x.id === id);
+  return c ? c.nome : 'Cliente removido';
+}
+
+function renderClientes(){
+  const alvo = $('#listaClientes');
+  if(!alvo) return;
+
+  if(!estado.clientes.length){
+    alvo.innerHTML = `<p class="vazio">Nenhuma cliente cadastrada ainda. Comece preenchendo o formulário acima. 🌷</p>`;
+    return;
+  }
+
+  const linhas = estado.clientes.map(c => {
+    const qtd = estado.vencimentos.filter(v => v.clienteId === c.id).length;
+    const prefRotulo = {whatsapp:'WhatsApp', email:'E-mail', ambos:'WhatsApp + E-mail'}[c.prefContato || 'whatsapp'];
+    return `
+      <tr>
+        <td><strong>${escaparHTML(c.nome)}</strong></td>
+        <td>${escaparHTML(c.email || '—')}</td>
+        <td>${escaparHTML(c.telefone || '—')}</td>
+        <td>${escaparHTML(c.documento || '—')}</td>
+        <td>${prefRotulo}<br><small style="color:var(--texto-suave)">dia ${c.diaEnvio || 5}</small></td>
+        <td>${qtd}</td>
+        <td>
+          <div class="acoes-tabela">
+            <button class="btn btn--suave btn--pequeno" data-acao="editar-cliente" data-id="${c.id}">✏️ Editar</button>
+            <button class="btn btn--perigo btn--pequeno" data-acao="excluir-cliente" data-id="${c.id}">🗑️ Excluir</button>
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+
+  alvo.innerHTML = `
+    <div class="tabela-envolucro">
+      <table>
+        <caption>${estado.clientes.length} cliente(s) cadastrado(s)</caption>
+        <thead>
+          <tr>
+            <th scope="col">Nome</th><th scope="col">E-mail</th>
+            <th scope="col">Telefone</th><th scope="col">CPF/CNPJ</th>
+            <th scope="col">Preferência</th><th scope="col">Cobranças</th>
+            <th scope="col">Ações</th>
+          </tr>
+        </thead>
+        <tbody>${linhas}</tbody>
+      </table>
+    </div>`;
+}
+
+function renderSelectsClientes(){
+  const opcoes = estado.clientes.slice()
+    .sort((a,b) => a.nome.localeCompare(b.nome, 'pt-BR'))
+    .map(c => `<option value="${c.id}">${escaparHTML(c.nome)}</option>`)
+    .join('');
+
+  const selVenc = $('#vencimentoCliente');
+  if(selVenc){ const at = selVenc.value; selVenc.innerHTML = `<option value="">— Selecione a cliente —</option>${opcoes}`; if(at) selVenc.value = at; }
+
+  const selFiltro = $('#filtroCliente');
+  if(selFiltro){ const at = selFiltro.value; selFiltro.innerHTML = `<option value="">Todos os clientes</option>${opcoes}`; if(at) selFiltro.value = at; }
+
+  const selDoc = $('#docCliente');
+  if(selDoc){ const at = selDoc.value; selDoc.innerHTML = `<option value="">— Sem vínculo —</option>${opcoes}`; if(at) selDoc.value = at; }
+}
+
+function rotuloStatus(v){
+  const hoje = hojeISO();
+  if(v.status === 'pago') return '<span class="etiqueta etiqueta--pago">Pago</span>';
+  if(diferencaDias(v.data, hoje) < 0) return '<span class="etiqueta etiqueta--atrasado">Atrasado</span>';
+  if(v.status === 'enviado') return '<span class="etiqueta etiqueta--enviado">Boleto enviado</span>';
+  return '<span class="etiqueta etiqueta--pendente">Pendente</span>';
+}
+
+function renderVencimentos(){
+  const alvo = $('#listaVencimentos');
+  if(!alvo) return;
+
+  if(!estado.vencimentos.length){
+    alvo.innerHTML = `<p class="vazio">Nenhum vencimento cadastrado. Programe a primeira cobrança acima. 📅</p>`;
+    return;
+  }
+
+  const ordenados = estado.vencimentos.slice().sort((a,b) => a.data.localeCompare(b.data));
+
+  const linhas = ordenados.map(v => {
+    const dias = diferencaDias(v.data, hojeISO());
+    let nota = '';
+    if(v.status !== 'pago'){
+      if(dias < 0) nota = `<br><small style="color:var(--perigo)">${Math.abs(dias)} dia(s) em atraso</small>`;
+      else if(dias <= 3) nota = `<br><small style="color:var(--alerta)">vence em ${dias} dia(s)</small>`;
+    }
+    const c = estado.clientes.find(x => x.id === v.clienteId) || {};
+    const temTel = limparTelefone(c.telefone).length >= 10;
+    const temMail = !!c.email;
+    const podeEnviar = v.status !== 'pago' && (temTel || temMail);
+
+    const ultimoEnvio = v.enviadoEm
+      ? `<br><small style="color:var(--texto-suave)">via ${v.enviadoPor === 'whatsapp' ? 'WhatsApp' : 'e-mail'} em ${formatarDataHora(v.enviadoEm)}</small>`
+      : '';
+    const marcaRec = v.recorrente ? ' <span class="etiqueta etiqueta--recorrente">recorrente</span>' : '';
+
+    return `
+      <tr>
+        <td><strong>${escaparHTML(nomeCliente(v.clienteId))}</strong>${marcaRec}</td>
+        <td>${escaparHTML(v.descricao || '—')}</td>
+        <td>${formatarMoeda(v.valor)}</td>
+        <td>${formatarDataBR(v.data)}${nota}</td>
+        <td>${rotuloStatus(v)}${ultimoEnvio}</td>
+        <td>
+          ${podeEnviar ? `<button class="btn btn--primario btn--pequeno" data-acao="abrir-envio" data-id="${v.id}">📤 Enviar boleto</button>` : ''}
+          <div class="acoes-envio">
+            <button class="btn btn--suave btn--pequeno" data-acao="editar-vencimento" data-id="${v.id}">✏️ Editar</button>
+            ${v.status !== 'pago'
+              ? `<button class="btn btn--fantasma btn--pequeno" data-acao="marcar-pago" data-id="${v.id}">✅ Baixar</button>`
+              : ''}
+            <button class="btn btn--perigo btn--pequeno" data-acao="excluir-vencimento" data-id="${v.id}">🗑️ Excluir</button>
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+
+  alvo.innerHTML = `
+    <div class="tabela-envolucro">
+      <table>
+        <caption>${estado.vencimentos.length} vencimento(s) cadastrado(s)</caption>
+        <thead>
+          <tr>
+            <th scope="col">Cliente</th><th scope="col">Descrição</th>
+            <th scope="col">Valor</th><th scope="col">Vencimento</th>
+            <th scope="col">Situação</th><th scope="col">Ações</th>
+          </tr>
+        </thead>
+        <tbody>${linhas}</tbody>
+      </table>
+    </div>`;
+}
+
+function renderEnvios(){
+  const alvo = $('#listaEnvios');
+  if(!alvo) return;
+
+  const hoje = hojeISO();
+  const lista = estado.vencimentos
+    .filter(v => v.status !== 'pago')
+    .sort((a,b) => a.data.localeCompare(b.data));
+
+  if(!lista.length){
+    alvo.innerHTML = `<p class="vazio">Nenhuma cobrança em aberto. Tudo em ordem! 🌸</p>`;
+    return;
+  }
+
+  const linhas = lista.map(v => {
+    const c = estado.clientes.find(x => x.id === v.clienteId) || {};
+    const tel = limparTelefone(c.telefone);
+    const temTel = tel.length >= 10;
+    const temMail = !!c.email;
+    const dias = diferencaDias(v.data, hoje);
+    const pref = c.prefContato || 'whatsapp';
+
+    let prazo = '';
+    if(dias < 0) prazo = `<span style="color:var(--perigo)">${Math.abs(dias)} dia(s) em atraso</span>`;
+    else if(dias === 0) prazo = `<span style="color:var(--perigo)">Vence hoje</span>`;
+    else if(dias <= 3) prazo = `<span style="color:var(--alerta)">vence em ${dias} dia(s)</span>`;
+    else prazo = `<span style="color:var(--texto-suave)">faltam ${dias} dias</span>`;
+
+    return `
+      <div class="doc" style="align-items:flex-start">
+        <span class="doc__icone" style="background:var(--primaria-suave);color:var(--primaria)">📤</span>
+        <span class="doc__info">
+          <span class="doc__nome">${escaparHTML(c.nome || 'Cliente removida')}</span>
+          <span class="doc__meta">
+            ${escaparHTML(v.descricao || 'Cobrança')} · ${formatarMoeda(v.valor)} · vence ${formatarDataBR(v.data)}<br>
+            ${prazo} · preferência: <strong>${pref === 'ambos' ? 'WhatsApp + E-mail' : (pref === 'email' ? 'E-mail' : 'WhatsApp')}</strong>
+            ${v.enviadoEm ? `<br><em>Último envio: ${v.enviadoPor === 'whatsapp' ? 'WhatsApp' : 'e-mail'} em ${formatarDataHora(v.enviadoEm)}</em>` : ''}
+          </span>
+        </span>
+        <span class="doc__acoes">
+          <button class="btn btn--primario btn--pequeno" data-acao="abrir-envio" data-id="${v.id}" ${(!temTel && !temMail) ? 'disabled style="opacity:.45;cursor:not-allowed"' : ''}>📤 Enviar boleto</button>
+        </span>
+      </div>`;
+  }).join('');
+
+  alvo.innerHTML = linhas;
+}
+
+function renderProximosVencimentos(){
+  const alvo = $('#proximosVencimentos');
+  if(!alvo) return;
+
+  const hoje = hojeISO();
+  const lista = estado.vencimentos
+    .filter(v => v.status !== 'pago')
+    .sort((a,b) => a.data.localeCompare(b.data))
+    .slice(0, 6);
+
+  if(!lista.length){
+    alvo.innerHTML = `<p class="vazio">Nenhuma cobrança em aberto. Tudo em ordem! 🌸</p>`;
+    return;
+  }
+
+  const linhas = lista.map(v => {
+    const dias = diferencaDias(v.data, hoje);
+    const cor = dias < 0 ? 'var(--perigo)' : (dias <= 3 ? 'var(--alerta)' : 'var(--texto-suave)');
+    const texto = dias < 0 ? `${Math.abs(dias)} dia(s) em atraso` : (dias === 0 ? 'vence hoje' : `faltam ${dias} dia(s)`);
+    return `
+      <tr>
+        <td><strong>${escaparHTML(nomeCliente(v.clienteId))}</strong></td>
+        <td>${escaparHTML(v.descricao || '—')}</td>
+        <td>${formatarMoeda(v.valor)}</td>
+        <td>${formatarDataBR(v.data)}</td>
+        <td style="color:${cor};font-weight:700">${texto}</td>
+      </tr>`;
+  }).join('');
+
+  alvo.innerHTML = `
+    <div class="tabela-envolucro">
+      <table>
+        <thead>
+          <tr><th scope="col">Cliente</th><th scope="col">Descrição</th>
+              <th scope="col">Valor</th><th scope="col">Vencimento</th>
+              <th scope="col">Prazo</th></tr>
+        </thead>
+        <tbody>${linhas}</tbody>
+      </table>
+    </div>`;
+}
+
+/* ============================================================
+   DOCUMENTOS
+   ============================================================ */
+function renderDocumentos(){
+  const alvo = $('#listaDocumentos');
+  if(!alvo) return;
+
+  if(!estado.documentos.length){
+    alvo.innerHTML = `<li class="vazio">Nenhum documento anexado. Envie o primeiro PDF acima. 📄</li>`;
+    return;
+  }
+
+  const ordenados = estado.documentos.slice().sort((a,b) => b.criadoEm - a.criadoEm);
+
+  alvo.innerHTML = ordenados.map(d => `
+    <li class="doc">
+      <span class="doc__icone" aria-hidden="true">PDF</span>
+      <span class="doc__info">
+        <span class="doc__nome">${escaparHTML(d.nome)}</span>
+        <span class="doc__meta">
+          ${formatarTamanho(d.tamanho)} · enviado em ${formatarDataHora(d.criadoEm)}
+          ${d.clienteId ? ' · ' + escaparHTML(nomeCliente(d.clienteId)) : ''}
+        </span>
+      </span>
+      <span class="doc__acoes">
+        <button class="btn btn--fantasma btn--pequeno" data-acao="visualizar-doc" data-id="${d.id}">👁️ Visualizar</button>
+        <button class="btn btn--perigo btn--pequeno" data-acao="excluir-doc" data-id="${d.id}">🗑️ Excluir</button>
+      </span>
+    </li>
+  `).join('');
+}
+
+async function processarArquivos(lista){
+  const arquivos = Array.from(lista || []);
+  if(!arquivos.length) return;
+  const clienteId = $('#docCliente') ? $('#docCliente').value : '';
+  let enviados = 0;
+
+  for(const arquivo of arquivos){
+    const ehPDF = arquivo.type === 'application/pdf' || /\.pdf$/i.test(arquivo.name);
+    if(!ehPDF){ notificar(`"${arquivo.name}" não é um PDF.`, 'alerta', 6000); continue; }
+    if(arquivo.size > 8 * 1024 * 1024){ notificar(`"${arquivo.name}" excede 8 MB.`, 'alerta', 6000); continue; }
+
+    const id = uid();
+    try{
+      await bdGuardar(id, arquivo);
+      estado.documentos.push({
+        id, nome: arquivo.name, tamanho: arquivo.size,
+        tipo: arquivo.type || 'application/pdf',
+        clienteId: clienteId || '', criadoEm: Date.now()
+      });
+      enviados++;
+    }catch(e){
+      console.warn(e);
+      notificar(`Falha ao armazenar "${arquivo.name}".`, 'perigo', 7000);
+    }
+  }
+  if(enviados){
+    salvarDados();
+    renderDocumentos();
+    atualizarInfoBackup();
+    notificar(`${enviados} documento(s) anexado(s) com sucesso.`, 'sucesso');
+  }
+}
+
+async function visualizarDocumento(id){
+  const meta = estado.documentos.find(d => d.id === id);
+  if(!meta) return;
+  try{
+    const blob = await bdObter(id);
+    if(!blob){ notificar('Arquivo não encontrado.', 'perigo'); return; }
+    const url = URL.createObjectURL(blob);
+    abrirModal(
+      `Visualizar · ${meta.nome}`,
+      `<iframe class="modal__quadro" src="${url}" title="Documento ${escaparHTML(meta.nome)}"></iframe>`,
+      `<a class="btn btn--fantasma" href="${url}" target="_blank" rel="noopener">Abrir em nova aba</a>
+       <button class="btn btn--suave" data-acao="fechar-modal">Fechar</button>`
+    );
+  }catch(e){ notificar('Não foi possível abrir o documento.', 'perigo'); }
+}
+
+function excluirDocumento(id){
+  const meta = estado.documentos.find(d => d.id === id);
+  if(!meta) return;
+  abrirModal(
+    'Excluir documento',
+    `<p>Tem certeza de que deseja excluir <strong>${escaparHTML(meta.nome)}</strong>?</p>
+     <p style="color:var(--texto-suave)">Esta ação não poderá ser desfeita.</p>`,
+    `<button class="btn btn--suave" data-acao="fechar-modal">Cancelar</button>
+     <button class="btn btn--perigo" data-acao="confirmar-exclusao-doc" data-id="${id}">Sim, excluir</button>`
+  );
+}
+
+/* ============================================================
+   CALENDÁRIO
+   ============================================================ */
+let mesCalendario = new Date();
+let diaSelecionado = null;
+
+function renderCalendario(){
+  const alvo = $('#gradeCalendario');
+  if(!alvo) return;
+
+  const ano = mesCalendario.getFullYear();
+  const mes = mesCalendario.getMonth();
+  $('#mesCalendario').textContent = `${NOMES_MESES[mes]} de ${ano}`;
+
+  const primeiroDiaSemana = new Date(ano, mes, 1).getDay();
+  const diasNoMes = new Date(ano, mes + 1, 0).getDate();
+  const diasMesAnterior = new Date(ano, mes, 0).getDate();
+  const hoje = hojeISO();
+  const celulas = [];
+
+  for(let i = primeiroDiaSemana - 1; i >= 0; i--){
+    const dia = diasMesAnterior - i;
+    celulas.push({data: paraISO(new Date(ano, mes - 1, dia)), numero: dia, fora: true});
+  }
+  for(let d = 1; d <= diasNoMes; d++){
+    celulas.push({data: paraISO(new Date(ano, mes, d)), numero: d, fora: false});
+  }
+  const restante = (7 - (celulas.length % 7)) % 7;
+  for(let d = 1; d <= restante; d++){
+    celulas.push({data: paraISO(new Date(ano, mes + 1, d)), numero: d, fora: true});
+  }
+
+  alvo.innerHTML = celulas.map(c => {
+    const eventos = estado.vencimentos.filter(v => v.data === c.data);
+    const classes = ['dia'];
+    if(c.fora) classes.push('dia--fora');
+    if(c.data === hoje) classes.push('dia--hoje');
+    if(c.data === diaSelecionado) classes.push('dia--selecionado');
+
+    let marcadores = '';
+    if(eventos.length && !c.fora){
+      const visiveis = eventos.slice(0, 3).map(ev => {
+        let tipo = 'pendente';
+        if(ev.status === 'pago') tipo = 'pago';
+        else if(diferencaDias(ev.data, hoje) < 0) tipo = 'atrasado';
+        return `<span class="dia__marcador dia__marcador--${tipo}"></span>`;
+      }).join('');
+      marcadores = `<span class="dia__ponto-duplo">${visiveis}</span>`;
+    }
+
+    return `<button type="button" class="${classes.join(' ')}"
+              data-acao="selecionar-dia" data-data="${c.data}"
+              ${c.fora ? 'tabindex="-1" aria-hidden="true"' : ''}
+              aria-label="${c.numero}, ${eventos.length} cobrança(s)">
+              <span>${c.numero}</span>${marcadores}
+            </button>`;
+  }).join('');
+}
+
+function selecionarDia(dataISO){
+  diaSelecionado = dataISO;
+  renderCalendario();
+
+  const [a, m, d] = dataISO.split('-').map(Number);
+  const dataObj = new Date(a, m - 1, d);
+  const eventos = estado.vencimentos.filter(v => v.data === dataISO);
+
+  $('#tituloDetalheDia').textContent =
+    `${NOMES_DIAS[dataObj.getDay()]}, ${d} de ${NOMES_MESES[m - 1]} de ${a}`;
+
+  const alvo = $('#detalheDia');
+  if(!eventos.length){
+    alvo.innerHTML = `<p class="vazio">Nenhuma cobrança programada para este dia. 🌿</p>`;
+    return;
+  }
+  const linhas = eventos.map(v => `
+    <tr>
+      <td><strong>${escaparHTML(nomeCliente(v.clienteId))}</strong></td>
+      <td>${escaparHTML(v.descricao || '—')}</td>
+      <td>${formatarMoeda(v.valor)}</td>
+      <td>${rotuloStatus(v)}</td>
+    </tr>`).join('');
+  alvo.innerHTML = `
+    <div class="tabela-envolucro">
+      <table>
+        <thead><tr><th scope="col">Cliente</th><th scope="col">Descrição</th>
+        <th scope="col">Valor</th><th scope="col">Situação</th></tr></thead>
+        <tbody>${linhas}</tbody>
+      </table>
+    </div>`;
+}
+
+/* ============================================================
+   GRÁFICOS
+   ============================================================ */
+function prepararCanvas(cv){
+  const dpr = window.devicePixelRatio || 1;
+  const r = cv.getBoundingClientRect();
+  const largura = Math.max(1, Math.floor(r.width));
+  const altura = Math.max(1, Math.floor(r.height));
+  cv.width  = Math.floor(largura * dpr);
+  cv.height = Math.floor(altura * dpr);
+  const ctx = cv.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, largura, altura);
+  return {ctx, w: largura, h: altura};
+}
+function corVariavel(nome){
+  return getComputedStyle(document.documentElement).getPropertyValue(nome).trim();
+}
+
+function desenharBarras(cv, dados){
+  const {ctx, w, h} = prepararCanvas(cv);
+  const margem = {topo:20, dir:14, base:38, esq:14};
+  const larguraUtil = w - margem.esq - margem.dir;
+  const alturaUtil = h - margem.topo - margem.base;
+  const maximo = Math.max(1, ...dados.map(d => d.pago + d.pendente));
+  const passo = larguraUtil / dados.length;
+  const larguraBarra = Math.min(52, passo * 0.55);
+
+  const corPago = corVariavel('--sucesso') || '#37946a';
+  const corPend = corVariavel('--primaria') || '#c2557f';
+  const corTexto = corVariavel('--texto-suave') || '#7d6779';
+  const corLinha = corVariavel('--borda') || '#f0dbe7';
+
+  ctx.strokeStyle = corLinha; ctx.lineWidth = 1;
+  for(let i = 0; i <= 4; i++){
+    const y = margem.topo + (alturaUtil / 4) * i;
+    ctx.beginPath(); ctx.moveTo(margem.esq, y); ctx.lineTo(w - margem.dir, y); ctx.stroke();
+  }
+
+  dados.forEach((d, i) => {
+    const x = margem.esq + passo * i + (passo - larguraBarra) / 2;
+    const totalPago = (d.pago / maximo) * alturaUtil;
+    const totalPend = (d.pendente / maximo) * alturaUtil;
+
+    const yPend = margem.topo + alturaUtil - totalPend;
+    const g1 = ctx.createLinearGradient(0, yPend, 0, margem.topo + alturaUtil);
+    g1.addColorStop(0, corPend); g1.addColorStop(1, corPend + '88');
+    ctx.fillStyle = g1;
+    ctx.beginPath();
+    if(ctx.roundRect) ctx.roundRect(x, yPend, larguraBarra, Math.max(totalPend, 1), [6,6,0,0]);
+    else ctx.rect(x, yPend, larguraBarra, Math.max(totalPend, 1));
+    ctx.fill();
+
+    const yPago = yPend - totalPago;
+    const g2 = ctx.createLinearGradient(0, yPago, 0, yPend);
+    g2.addColorStop(0, corPago); g2.addColorStop(1, corPago + '88');
+    ctx.fillStyle = g2;
+    ctx.beginPath();
+    if(ctx.roundRect) ctx.roundRect(x, yPago, larguraBarra, Math.max(totalPago, totalPago > 0 ? 2 : 0), [6,6,0,0]);
+    else ctx.rect(x, yPago, larguraBarra, Math.max(totalPago, totalPago > 0 ? 2 : 0));
+    ctx.fill();
+
+    ctx.fillStyle = corTexto;
+    ctx.font = '600 12px Nunito, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(d.rotulo, x + larguraBarra / 2, h - 14);
+  });
+
+  ctx.textAlign = 'left';
+  ctx.font = '700 11px Nunito, sans-serif';
+  ctx.fillStyle = corPago; ctx.fillRect(margem.esq, 4, 10, 10);
+  ctx.fillStyle = corTexto; ctx.fillText('Recebido', margem.esq + 15, 13);
+  ctx.fillStyle = corPend; ctx.fillRect(margem.esq + 82, 4, 10, 10);
+  ctx.fillStyle = corTexto; ctx.fillText('A receber', margem.esq + 97, 13);
+}
+
+function desenharRosca(cv, dados){
+  const {ctx, w, h} = prepararCanvas(cv);
+  const total = dados.reduce((s,d) => s + d.valor, 0);
+  const cx = w / 2, cy = h / 2;
+  const raio = Math.min(w, h) / 2 - 22;
+
+  const corTexto = corVariavel('--texto') || '#3d2b3a';
+  const corSuave = corVariavel('--texto-suave') || '#7d6779';
+  const corFundo = corVariavel('--borda') || '#f0dbe7';
+
+  if(total === 0){
+    ctx.strokeStyle = corFundo; ctx.lineWidth = 26;
+    ctx.beginPath(); ctx.arc(cx, cy, raio - 13, 0, Math.PI * 2); ctx.stroke();
+    ctx.fillStyle = corSuave; ctx.font = '600 13px Nunito, sans-serif';
+    ctx.textAlign = 'center'; ctx.fillText('Sem dados', cx, cy + 4);
+    return;
+  }
+
+  let angulo = -Math.PI / 2;
+  dados.forEach(d => {
+    if(d.valor <= 0) return;
+    const fatia = (d.valor / total) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, raio - 13, angulo, angulo + fatia);
+    ctx.strokeStyle = d.cor; ctx.lineWidth = 26; ctx.lineCap = 'butt';
+    ctx.stroke();
+    angulo += fatia;
+  });
+
+  ctx.fillStyle = corTexto; ctx.textAlign = 'center';
+  ctx.font = '700 20px "Cormorant Garamond", Georgia, serif';
+  ctx.fillText(String(dados.reduce((s,d) => s + d.quantidade, 0)), cx, cy - 2);
+  ctx.fillStyle = corSuave; ctx.font = '600 11px Nunito, sans-serif';
+  ctx.fillText('cobranças', cx, cy + 16);
+}
+
+function renderGraficos(){
+  const cvBarras = $('#graficoBarras');
+  const cvRosca  = $('#graficoRosca');
+  if(!cvBarras || !cvRosca) return;
+
+  const agora = new Date();
+  const meses = [];
+  for(let i = 5; i >= 0; i--){
+    const d = new Date(agora.getFullYear(), agora.getMonth() - i, 1);
+    meses.push({
+      ano: d.getFullYear(), mes: d.getMonth(),
+      rotulo: NOMES_MESES[d.getMonth()].slice(0, 3),
+      pago: 0, pendente: 0
+    });
+  }
+  estado.vencimentos.forEach(v => {
+    const [a, m] = v.data.split('-').map(Number);
+    const alvo = meses.find(x => x.ano === a && x.mes === m - 1);
+    if(!alvo) return;
+    if(v.status === 'pago') alvo.pago += Number(v.valor || 0);
+    else alvo.pendente += Number(v.valor || 0);
+  });
+  desenharBarras(cvBarras, meses);
+  const totalPeriodo = meses.reduce((s,m) => s + m.pago + m.pendente, 0);
+  $('#resumoBarras').textContent = `Total movimentado nos últimos 6 meses: ${formatarMoeda(totalPeriodo)}.`;
+
+  const hoje = hojeISO();
+  let pagoQ = 0, pagoV = 0, pendQ = 0, pendV = 0, atrasQ = 0, atrasV = 0;
+  estado.vencimentos.forEach(v => {
+    const val = Number(v.valor || 0);
+    if(v.status === 'pago'){ pagoQ++; pagoV += val; }
+    else if(diferencaDias(v.data, hoje) < 0){ atrasQ++; atrasV += val; }
+    else { pendQ++; pendV += val; }
+  });
+  const dadosRosca = [
+    {rotulo:'Recebido',  valor: pagoV,  quantidade: pagoQ,  cor: corVariavel('--sucesso') || '#37946a'},
+    {rotulo:'A receber', valor: pendV,  quantidade: pendQ,  cor: corVariavel('--primaria') || '#c2557f'},
+    {rotulo:'Em atraso', valor: atrasV, quantidade: atrasQ, cor: corVariavel('--perigo')  || '#c4405a'}
+  ];
+  desenharRosca(cvRosca, dadosRosca);
+  $('#resumoRosca').innerHTML = dadosRosca.map(d =>
+    `<span style="display:inline-flex;align-items:center;gap:.35rem;margin-right:1rem">
+       <span style="width:10px;height:10px;border-radius:50%;background:${d.cor};display:inline-block"></span>
+       <strong>${d.rotulo}:</strong> ${d.quantidade} · ${formatarMoeda(d.valor)}
+     </span>`).join('');
+}
+
+/* ============================================================
+   RELATÓRIOS
+   ============================================================ */
+function filtrarVencimentos(){
+  const cliente = $('#filtroCliente') ? $('#filtroCliente').value : '';
+  const status  = $('#filtroStatus')  ? $('#filtroStatus').value  : '';
+  const inicio  = $('#filtroInicio')  ? $('#filtroInicio').value  : '';
+  const fim     = $('#filtroFim')     ? $('#filtroFim').value     : '';
+  const hoje    = hojeISO();
+
+  return estado.vencimentos.filter(v => {
+    if(cliente && v.clienteId !== cliente) return false;
+    if(inicio && v.data < inicio) return false;
+    if(fim && v.data > fim) return false;
+    if(status){
+      if(status === 'atrasado'){
+        if(v.status === 'pago' || diferencaDias(v.data, hoje) >= 0) return false;
+      }else if(v.status !== status) return false;
+    }
+    return true;
+  }).sort((a,b) => a.data.localeCompare(b.data));
+}
+
+function renderRelatorios(){
+  const alvo = $('#tabelaRelatorio');
+  const resumo = $('#resumoRelatorio');
+  if(!alvo) return;
+
+  const lista = filtrarVencimentos();
+  const total = lista.reduce((s,v) => s + Number(v.valor||0), 0);
+  const pago  = lista.filter(v => v.status === 'pago').reduce((s,v) => s + Number(v.valor||0), 0);
+  const aberto = total - pago;
+
+  if(resumo){
+    resumo.innerHTML = `
+      <article class="indicador"><p class="indicador__rotulo">Registros</p>
+      <p class="indicador__valor">${lista.length}</p></article>
+      <article class="indicador indicador--sucesso"><p class="indicador__rotulo">Total recebido</p>
+      <p class="indicador__valor">${formatarMoeda(pago)}</p></article>
+      <article class="indicador indicador--alerta"><p class="indicador__rotulo">Total em aberto</p>
+      <p class="indicador__valor">${formatarMoeda(aberto)}</p></article>
+      <article class="indicador"><p class="indicador__rotulo">Total geral</p>
+      <p class="indicador__valor">${formatarMoeda(total)}</p></article>`;
+  }
+
+  if(!lista.length){
+    alvo.innerHTML = `<p class="vazio">Nenhum registro encontrado com os filtros aplicados. 🔍</p>`;
+    return;
+  }
+
+  const linhas = lista.map(v => `
+    <tr>
+      <td><strong>${escaparHTML(nomeCliente(v.clienteId))}</strong></td>
+      <td>${escaparHTML(v.descricao || '—')}</td>
+      <td>${formatarMoeda(v.valor)}</td>
+      <td>${formatarDataBR(v.data)}</td>
+      <td>${rotuloStatus(v)}</td>
+    </tr>`).join('');
+
+  alvo.innerHTML = `
+    <div class="tabela-envolucro">
+      <table>
+        <caption>Relatório gerado em ${new Date().toLocaleString('pt-BR')}</caption>
+        <thead>
+          <tr><th scope="col">Cliente</th><th scope="col">Descrição</th>
+              <th scope="col">Valor</th><th scope="col">Vencimento</th>
+              <th scope="col">Situação</th></tr>
+        </thead>
+        <tbody>${linhas}</tbody>
+      </table>
+    </div>`;
+}
+
+function exportarCSV(){
+  const lista = filtrarVencimentos();
+  if(!lista.length){ notificar('Não há dados para exportar.', 'alerta'); return; }
+  const cabecalho = ['Cliente','Descrição','Valor (R$)','Vencimento','Situação'];
+  const linhas = lista.map(v => {
+    let sit = 'Pendente';
+    if(v.status === 'pago') sit = 'Pago';
+    else if(v.status === 'enviado') sit = 'Boleto enviado';
+    else if(diferencaDias(v.data, hojeISO()) < 0) sit = 'Atrasado';
+    return [nomeCliente(v.clienteId), v.descricao || '', String(v.valor).replace('.', ','),
+            formatarDataBR(v.data), sit]
+      .map(c => `"${String(c).replace(/"/g, '""')}"`).join(';');
+  });
+  const csv = '\uFEFF' + [cabecalho.join(';'), ...linhas].join('\r\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `relatorio-financeiro-natalia-dias-${paraISO(new Date())}.csv`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+  notificar('Relatório exportado em CSV.', 'sucesso');
+}
+
+/* ============================================================
+   NOTIFICAÇÕES DE VENCIMENTO
+   ============================================================ */
+function calcularNotificacoes(){
+  const hoje = hojeISO();
+  const lista = estado.vencimentos
+    .filter(v => v.status !== 'pago')
+    .map(v => ({...v, dias: diferencaDias(v.data, hoje)}))
+    .filter(v => v.dias <= 3)
+    .sort((a,b) => a.dias - b.dias);
+
+  const hojeDia = new Date().getDate();
+  estado.clientes.forEach(c => {
+    if(Number(c.diaEnvio) === hojeDia){
+      const jaTemCobrancaHoje = estado.vencimentos.some(v => v.clienteId === c.id && v.data === hoje);
+      if(!jaTemCobrancaHoje){
+        lista.push({
+          id: 'envio-mensal-' + c.id,
+          clienteId: c.id,
+          descricao: 'Envio mensal programado',
+          valor: 0, data: hoje, dias: 0,
+          ehLembreteEnvio: true
+        });
+      }
+    }
+  });
+  return lista;
+}
+
+function verificarNotificacoes(){
+  const lista = calcularNotificacoes();
+  const hoje = hojeISO();
+
+  lista.forEach(v => {
+    if(v.ehLembreteEnvio){
+      if(estado.notificados[v.id] === hoje) return;
+      estado.notificados[v.id] = hoje;
+      notificar(`📅 Hoje é o dia de enviar o boleto mensal de ${nomeCliente(v.clienteId)}.`, 'alerta', 9000);
+      return;
+    }
+    if(v.dias < 0) return;
+    if(estado.notificados[v.id] === hoje) return;
+    estado.notificados[v.id] = hoje;
+
+    const nome = nomeCliente(v.clienteId);
+    if(v.dias === 0){
+      notificar(`⏰ ${nome}: "${v.descricao || 'Cobrança'}" vence HOJE. Envie o boleto!`, 'perigo', 9000);
+    }else{
+      notificar(`🔔 ${nome}: "${v.descricao || 'Cobrança'}" vence em ${v.dias} dia(s). Prepare o boleto.`, 'alerta', 9000);
+    }
+  });
+  salvarDados();
+  atualizarSino();
+}
+
+function atualizarSino(){
+  const contador = $('#sinoContador');
+  const painel   = $('#painelNotificacoes');
+  if(!contador || !painel) return;
+
+  const lista = calcularNotificacoes();
+  if(lista.length){
+    contador.hidden = false;
+    contador.textContent = String(lista.length);
+  }else{
+    contador.hidden = true;
+  }
+
+  if(!lista.length){
+    painel.innerHTML = `<p class="notificacao__texto" style="padding:.6rem">Nenhum aviso no momento. Tudo tranquilo! 🌸</p>`;
+    return;
+  }
+
+  painel.innerHTML = lista.map(v => {
+    if(v.ehLembreteEnvio){
+      return `
+        <div class="notificacao" style="border-left-color:var(--primaria)">
+          <span class="notificacao__titulo">${escaparHTML(nomeCliente(v.clienteId))}</span>
+          <p class="notificacao__texto">
+            Hoje é o dia programado para envio do boleto mensal.<br>
+            <em>Cadastre a cobrança e envie pelo canal preferido.</em>
+          </p>
+        </div>`;
+    }
+    const nome = nomeCliente(v.clienteId);
+    let prazo;
+    if(v.dias < 0) prazo = `${Math.abs(v.dias)} dia(s) em atraso`;
+    else if(v.dias === 0) prazo = 'Vence hoje';
+    else prazo = `Vence em ${v.dias} dia(s)`;
+    return `
+      <div class="notificacao" style="border-left-color:${v.dias <= 0 ? 'var(--perigo)' : 'var(--alerta)'}">
+        <span class="notificacao__titulo">${escaparHTML(nome)}</span>
+        <p class="notificacao__texto">
+          ${escaparHTML(v.descricao || 'Cobrança')} · ${formatarMoeda(v.valor)}<br>
+          ${formatarDataBR(v.data)} — <strong>${prazo}</strong><br>
+          <em>Envie o boleto de cobrança.</em>
+        </p>
+      </div>`;
+  }).join('');
+}
+
+/* ============================================================
+   ENVIO DE BOLETOS — WHATSAPP / E-MAIL
+   ============================================================ */
+function gerarTextoBoleto(v, c){
+  return [
+    `Olá, ${c.nome}! Tudo bem? 🌸`,
+    ``,
+    `Segue o boleto de cobrança referente a:`,
+    `• ${v.descricao || 'Cobrança'}`,
+    `• Valor: ${formatarMoeda(v.valor)}`,
+    `• Vencimento: ${formatarDataBR(v.data)}`,
+    ``,
+    `Qualquer dúvida, estou à disposição.`,
+    ``,
+    `Com carinho,`,
+    `Natália Dias`
+  ].join('\n');
+}
+
+function abrirModalEnvio(vencId){
+  const v = estado.vencimentos.find(x => x.id === vencId);
+  if(!v) return;
+  const c = estado.clientes.find(x => x.id === v.clienteId);
+  if(!c){ notificar('Cliente não encontrada.', 'perigo'); return; }
+
+  const tel = limparTelefone(c.telefone);
+  const temTel = tel.length >= 10;
+  const temMail = !!c.email;
+  const pref = c.prefContato || 'whatsapp';
+  const texto = gerarTextoBoleto(v, c);
+
+  const corpo = `
+    <div class="linha-info">
+      <span>👤 <strong>${escaparHTML(c.nome)}</strong></span>
+      <span>💰 ${formatarMoeda(v.valor)}</span>
+      <span>📅 ${formatarDataBR(v.data)}</span>
+    </div>
+
+    <p style="margin:0 0 .4rem"><strong>Como deseja enviar o boleto?</strong></p>
+    <div class="canal-grade">
+      <button type="button" class="canal-opcao" data-acao="env-whats" data-id="${v.id}"
+              ${temTel ? '' : 'disabled style="opacity:.45;cursor:not-allowed"'}>
+        <span class="canal-opcao__icone" aria-hidden="true">💬</span>
+        <span class="canal-opcao__titulo">WhatsApp</span>
+        <span class="canal-opcao__desc">${temTel ? escaparHTML(c.telefone) : 'Sem telefone cadastrado'}</span>
+      </button>
+
+      <button type="button" class="canal-opcao" data-acao="env-email" data-id="${v.id}"
+              ${temMail ? '' : 'disabled style="opacity:.45;cursor:not-allowed"'}>
+        <span class="canal-opcao__icone" aria-hidden="true">✉️</span>
+        <span class="canal-opcao__titulo">E-mail</span>
+        <span class="canal-opcao__desc">${temMail ? escaparHTML(c.email) : 'Sem e-mail cadastrado'}</span>
+      </button>
+    </div>
+
+    <p style="margin:.8rem 0 .3rem"><strong>Prévia da mensagem</strong>
+       <em style="color:var(--texto-suave)">(pode editar)</em></p>
+    <textarea class="previa-mensagem" id="textoBoleto" aria-label="Mensagem do boleto">${escaparHTML(texto)}</textarea>
+
+    <div class="opcoes-extras">
+      <label>
+        <input type="checkbox" id="marcarEnviado" checked>
+        Marcar como “Boleto enviado” após o envio
+      </label>
+      <label>
+        <input type="checkbox" id="agendarProximo">
+        Agendar cobrança para o mês seguinte (dia ${c.diaEnvio || 5})
+      </label>
+    </div>
+
+    <p style="margin-top:.9rem;font-size:.82rem;color:var(--texto-suave)">
+      Preferência cadastrada: <strong>${pref === 'ambos' ? 'WhatsApp + E-mail' : (pref === 'email' ? 'E-mail' : 'WhatsApp')}</strong>
+    </p>
+  `;
+
+  abrirModal(
+    'Enviar boleto de cobrança',
+    corpo,
+    `<button class="btn btn--suave" data-acao="fechar-modal">Cancelar</button>`
+  );
+}
+
+function registrarEnvio(v, canal){
+  v.enviadoPor = canal;
+  v.enviadoEm = Date.now();
+  v.status = 'enviado';
+  if(!Array.isArray(v.historicoEnvios)) v.historicoEnvios = [];
+  v.historicoEnvios.push({canal, quando: Date.now()});
+  salvarDados();
+  renderTudo();
+  notificar(`Boleto registrado como enviado via ${canal === 'whatsapp' ? 'WhatsApp' : 'e-mail'}.`, 'sucesso');
+}
+
+function enviarViaWhatsAppSemRegistrar(vencId, textoPersonalizado){
+  const v = estado.vencimentos.find(x => x.id === vencId);
+  const c = estado.clientes.find(x => x.id === v.clienteId);
+  if(!v || !c) return;
+  const tel = limparTelefone(c.telefone);
+  if(tel.length < 10){ notificar('Telefone inválido.', 'alerta'); return; }
+  const numero = tel.startsWith('55') ? tel : '55' + tel;
+  const texto = encodeURIComponent(textoPersonalizado || gerarTextoBoleto(v, c));
+  window.open(`https://wa.me/${numero}?text=${texto}`, '_blank', 'noopener');
+  fecharModal();
+}
+
+function enviarViaEmailSemRegistrar(vencId, textoPersonalizado){
+  const v = estado.vencimentos.find(x => x.id === vencId);
+  const c = estado.clientes.find(x => x.id === v.clienteId);
+  if(!v || !c || !c.email){ notificar('E-mail não cadastrado.', 'alerta'); return; }
+  const assunto = encodeURIComponent(`Boleto de cobrança — ${v.descricao || formatarDataBR(v.data)}`);
+  const corpo   = encodeURIComponent(textoPersonalizado || gerarTextoBoleto(v, c));
+  window.location.href = `mailto:${encodeURIComponent(c.email)}?subject=${assunto}&body=${corpo}`;
+  fecharModal();
+}
+
+function agendarProximoMes(vencId){
+  const v = estado.vencimentos.find(x => x.id === vencId);
+  if(!v) return false;
+  const [a, m, d] = v.data.split('-').map(Number);
+  const base = new Date(a, m, d);
+  const ultimo = new Date(base.getFullYear(), base.getMonth() + 1, 0).getDate();
+  if(d > ultimo) base.setDate(ultimo);
+
+  const novo = {
+    id: uid(), clienteId: v.clienteId, descricao: v.descricao,
+    valor: v.valor, data: paraISO(base), status: 'pendente',
+    criadoEm: Date.now(), recorrente: true, origemRecorrencia: v.id
+  };
+
+  const existe = estado.vencimentos.some(x =>
+    x.clienteId === novo.clienteId && x.data === novo.data &&
+    (x.descricao || '') === (novo.descricao || ''));
+  if(existe){
+    notificar('Já existe uma cobrança agendada para o próximo mês.', 'alerta', 6000);
+    return false;
+  }
+  estado.vencimentos.push(novo);
+  salvarDados();
+  renderTudo();
+  notificar(`📅 Cobrança agendada para ${formatarDataBR(novo.data)}.`, 'sucesso', 6500);
+  return true;
+}
+
+/* ============================================================
+   EVENTOS — DELEGAÇÃO
+   ============================================================ */
+document.addEventListener('click', (e) => {
+  const alvo = e.target.closest('[data-acao]');
+  if(!alvo) return;
+  const acao = alvo.dataset.acao;
+  const id   = alvo.dataset.id;
+
+  switch(acao){
+    case 'alternar-tema': alternarTema(); break;
+    case 'abrir-menu': abrirMenu(); break;
+    case 'fechar-menu': fecharMenu(); break;
+    case 'ir-visao': irParaVisao(alvo.dataset.visao); fecharMenu(); break;
+
+    case 'editar-cliente': {
+      const c = estado.clientes.find(x => x.id === id);
+      if(!c) return;
+      $('#clienteId').value = c.id;
+      $('#clienteNome').value = c.nome || '';
+      $('#clienteEmail').value = c.email || '';
+      $('#clienteTelefone').value = c.telefone || '';
+      $('#clienteDocumento').value = c.documento || '';
+      $('#clientePrefContato').value = c.prefContato || 'whatsapp';
+      $('#clienteDiaEnvio').value = c.diaEnvio || 5;
+      $('#rotuloFormCliente').textContent = 'Editando cliente';
+      $('#clienteNome').focus();
+      window.scrollTo({top:0, behavior:'smooth'});
+      break;
+    }
+    case 'excluir-cliente': excluirCliente(id); break;
+    case 'limpar-cliente': limparFormCliente(); break;
+
+    case 'editar-vencimento': {
+      const v = estado.vencimentos.find(x => x.id === id);
+      if(!v) return;
+      renderSelectsClientes();
+      $('#vencimentoId').value = v.id;
+      $('#vencimentoCliente').value = v.clienteId || '';
+      $('#vencimentoDescricao').value = v.descricao || '';
+      $('#vencimentoValor').value = v.valor || '';
+      $('#vencimentoData').value = v.data || '';
+      $('#vencimentoStatus').value = v.status || 'pendente';
+      $('#rotuloFormVenc').textContent = 'Editando vencimento';
+      $('#vencimentoCliente').focus();
+      window.scrollTo({top:0, behavior:'smooth'});
+      break;
+    }
+    case 'excluir-vencimento': excluirVencimento(id); break;
+    case 'marcar-pago': {
+      const v = estado.vencimentos.find(x => x.id === id);
+      if(!v) return;
+      v.status = 'pago';
+      salvarDados();
+      renderTudo();
+      notificar('Cobrança baixada como paga. ✅', 'sucesso');
+      break;
+    }
+    case 'limpar-vencimento': limparFormVencimento(); break;
+
+    case 'visualizar-doc': visualizarDocumento(id); break;
+    case 'excluir-doc': excluirDocumento(id); break;
+    case 'confirmar-exclusao-doc': {
+      const meta = estado.documentos.find(d => d.id === id);
+      estado.documentos = estado.documentos.filter(d => d.id !== id);
+      bdExcluir(id).catch(() => {});
+      salvarDados();
+      renderDocumentos();
+      atualizarInfoBackup();
+      fecharModal();
+      notificar(`Documento "${meta ? meta.nome : ''}" excluído.`, 'sucesso');
+      break;
+    }
+
+    case 'selecionar-dia': selecionarDia(alvo.dataset.data); break;
+    case 'mes-anterior':
+      mesCalendario = new Date(mesCalendario.getFullYear(), mesCalendario.getMonth() - 1, 1);
+      renderCalendario();
+      break;
+    case 'mes-seguinte':
+      mesCalendario = new Date(mesCalendario.getFullYear(), mesCalendario.getMonth() + 1, 1);
+      renderCalendario();
+      break;
+    case 'mes-hoje':
+      mesCalendario = new Date();
+      renderCalendario();
+      break;
+
+    case 'exportar-csv': exportarCSV(); break;
+    case 'imprimir': window.print(); break;
+    case 'limpar-filtros': {
+      const f = $('#formFiltros');
+      if(f) f.reset();
+      renderRelatorios();
+      break;
+    }
+
+    case 'exportar-backup': baixarBackup(); break;
+    case 'importar-backup': $('#inputBackup').click(); break;
+    case 'backup-agora':
+      if(salvarBackupAutomatico(false)) notificar('Backup gravado com sucesso.', 'sucesso');
+      break;
+    case 'baixar-e-sair':
+      baixarBackup();
+      fecharModal();
+      setTimeout(sairDoSistema, 500);
+      break;
+    case 'sair-sem-backup':
+      fecharModal();
+      sairDoSistema();
+      break;
+
+    case 'fechar-modal': fecharModal(); break;
+
+    case 'sair':
+      abrirModal(
+        'Sair do sistema',
+        `<p>Deseja baixar uma cópia de segurança dos seus dados antes de sair?</p>
+         <p style="color:var(--texto-suave);font-size:.9rem">
+           Um backup automático já foi gravado neste navegador.
+         </p>`,
+        `<button class="btn btn--suave" data-acao="fechar-modal">Cancelar</button>
+         <button class="btn btn--fantasma" data-acao="sair-sem-backup">Sair sem baixar</button>
+         <button class="btn btn--primario" data-acao="baixar-e-sair">Baixar backup e sair</button>`
+      );
+      break;
+
+    /* ==== ENVIO DE BOLETOS ==== */
+    case 'abrir-envio': abrirModalEnvio(id); break;
+
+    case 'env-whats': {
+      const texto = $('#textoBoleto') ? $('#textoBoleto').value : null;
+      const marcar = $('#marcarEnviado') ? $('#marcarEnviado').checked : true;
+      const agendar = $('#agendarProximo') ? $('#agendarProximo').checked : false;
+      if(marcar){
+        const v = estado.vencimentos.find(x => x.id === id);
+        if(v) registrarEnvio(v, 'whatsapp');
+      }
+      if(agendar) setTimeout(() => agendarProximoMes(id), 900);
+      enviarViaWhatsAppSemRegistrar(id, texto);
+      break;
+    }
+
+    case 'env-email': {
+      const texto = $('#textoBoleto') ? $('#textoBoleto').value : null;
+      const marcar = $('#marcarEnviado') ? $('#marcarEnviado').checked : true;
+      const agendar = $('#agendarProximo') ? $('#agendarProximo').checked : false;
+      if(marcar){
+        const v = estado.vencimentos.find(x => x.id === id);
+        if(v) registrarEnvio(v, 'email');
+      }
+      if(agendar) setTimeout(() => agendarProximoMes(id), 900);
+      enviarViaEmailSemRegistrar(id, texto);
+      break;
+    }
+  }
+});
+
+document.addEventListener('click', (e) => {
+  const painel = $('#painelNotificacoes');
+  const sino   = $('#btnSino');
+  if(!painel || painel.hidden) return;
+  if(!painel.contains(e.target) && !sino.contains(e.target)){
+    painel.hidden = true;
+    sino.setAttribute('aria-expanded', 'false');
+  }
+});
+
+$('#overlay').addEventListener('click', fecharMenu);
+
+/* ============================================================
+   FORMULÁRIOS
+   ============================================================ */
+function limparFormCliente(){
+  $('#formCliente').reset();
+  $('#clienteId').value = '';
+  $('#rotuloFormCliente').textContent = 'Nova cliente';
+  $('#clienteNome').focus();
+}
+
+$('#formCliente').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const nome = $('#clienteNome').value.trim();
+  if(!nome){ notificar('Informe o nome completo da cliente.', 'alerta'); $('#clienteNome').focus(); return; }
+
+  const dados = {
+    nome,
+    email: $('#clienteEmail').value.trim(),
+    telefone: $('#clienteTelefone').value.trim(),
+    documento: $('#clienteDocumento').value.trim(),
+    prefContato: $('#clientePrefContato').value,
+    diaEnvio: Math.min(28, Math.max(1, parseInt($('#clienteDiaEnvio').value, 10) || 5))
+  };
+
+  const id = $('#clienteId').value;
+  if(id){
+    const idx = estado.clientes.findIndex(c => c.id === id);
+    if(idx > -1) estado.clientes[idx] = {...estado.clientes[idx], ...dados};
+    notificar('Cliente atualizada com sucesso.', 'sucesso');
+  }else{
+    estado.clientes.push({id: uid(), ...dados, criadoEm: Date.now()});
+    notificar('Cliente cadastrada com sucesso! 🌷', 'sucesso');
+  }
+  salvarDados();
+  limparFormCliente();
+  renderTudo();
+});
+
+function excluirCliente(id){
+  const c = estado.clientes.find(x => x.id === id);
+  if(!c) return;
+  const vinculados = estado.vencimentos.filter(v => v.clienteId === id).length;
+  abrirModal(
+    'Excluir cliente',
+    `<p>Deseja realmente excluir <strong>${escaparHTML(c.nome)}</strong>?</p>
+     ${vinculados ? `<p style="color:var(--alerta)">Existem ${vinculados} vencimento(s) vinculado(s), que também serão removidos.</p>` : ''}
+     <p style="color:var(--texto-suave)">Esta ação não poderá ser desfeita.</p>`,
+    `<button class="btn btn--suave" data-acao="fechar-modal">Cancelar</button>
+     <button class="btn btn--perigo" data-acao="confirmar-exclusao-cliente" data-id="${id}">Sim, excluir</button>`
+  );
+}
+
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-acao="confirmar-exclusao-cliente"]');
+  if(!btn) return;
+  const id = btn.dataset.id;
+  estado.clientes = estado.clientes.filter(c => c.id !== id);
+  estado.vencimentos = estado.vencimentos.filter(v => v.clienteId !== id);
+  salvarDados();
+  fecharModal();
+  renderTudo();
+  notificar('Cliente excluída.', 'sucesso');
+});
+
+function limparFormVencimento(){
+  $('#formVencimento').reset();
+  $('#vencimentoId').value = '';
+  $('#rotuloFormVenc').textContent = 'Novo vencimento';
+  $('#vencimentoCliente').focus();
+}
+
+$('#formVencimento').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const clienteId  = $('#vencimentoCliente').value;
+  const descricao  = $('#vencimentoDescricao').value.trim();
+  const valor      = parseFloat($('#vencimentoValor').value);
+  const data       = $('#vencimentoData').value;
+  const status     = $('#vencimentoStatus').value;
+
+  if(!clienteId){ notificar('Selecione a cliente da cobrança.', 'alerta'); $('#vencimentoCliente').focus(); return; }
+  if(!descricao){ notificar('Informe a descrição da cobrança.', 'alerta'); $('#vencimentoDescricao').focus(); return; }
+  if(isNaN(valor) || valor <= 0){ notificar('Informe um valor válido.', 'alerta'); $('#vencimentoValor').focus(); return; }
+  if(!data){ notificar('Informe a data de vencimento.', 'alerta'); $('#vencimentoData').focus(); return; }
+
+  const dados = {clienteId, descricao, valor, data, status};
+  const id = $('#vencimentoId').value;
+
+  if(id){
+    const idx = estado.vencimentos.findIndex(v => v.id === id);
+    if(idx > -1) estado.vencimentos[idx] = {...estado.vencimentos[idx], ...dados};
+    notificar('Vencimento atualizado com sucesso.', 'sucesso');
+  }else{
+    estado.vencimentos.push({id: uid(), ...dados, criadoEm: Date.now()});
+    notificar('Vencimento cadastrado com sucesso! 📅', 'sucesso');
+  }
+  salvarDados();
+  limparFormVencimento();
+  renderTudo();
+});
+
+function excluirVencimento(id){
+  const v = estado.vencimentos.find(x => x.id === id);
+  if(!v) return;
+  abrirModal(
+    'Excluir vencimento',
+    `<p>Deseja realmente excluir a cobrança <strong>${escaparHTML(v.descricao || 'sem descrição')}</strong>
+     de ${escaparHTML(nomeCliente(v.clienteId))}?</p>`,
+    `<button class="btn btn--suave" data-acao="fechar-modal">Cancelar</button>
+     <button class="btn btn--perigo" data-acao="confirmar-exclusao-venc" data-id="${id}">Sim, excluir</button>`
+  );
+}
+
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-acao="confirmar-exclusao-venc"]');
+  if(!btn) return;
+  estado.vencimentos = estado.vencimentos.filter(v => v.id !== btn.dataset.id);
+  salvarDados();
+  fecharModal();
+  renderTudo();
+  notificar('Vencimento excluído.', 'sucesso');
+});
+
+$('#formFiltros').addEventListener('submit', (e) => {
+  e.preventDefault();
+  renderRelatorios();
+});
+
+/* ============================================================
+   UPLOAD
+   ============================================================ */
+const areaUpload = $('#areaUpload');
+const inputArquivo = $('#inputArquivo');
+areaUpload.addEventListener('click', () => inputArquivo.click());
+areaUpload.addEventListener('keydown', (e) => {
+  if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); inputArquivo.click(); }
+});
+inputArquivo.addEventListener('change', (e) => {
+  processarArquivos(e.target.files);
+  inputArquivo.value = '';
+});
+['dragenter','dragover'].forEach(evt => {
+  areaUpload.addEventListener(evt, (e) => { e.preventDefault(); areaUpload.classList.add('arrastando'); });
+});
+['dragleave','drop'].forEach(evt => {
+  areaUpload.addEventListener(evt, (e) => { e.preventDefault(); areaUpload.classList.remove('arrastando'); });
+});
+areaUpload.addEventListener('drop', (e) => {
+  if(e.dataTransfer && e.dataTransfer.files) processarArquivos(e.dataTransfer.files);
+});
+$('#inputBackup').addEventListener('change', (e) => {
+  const arq = e.target.files[0];
+  if(arq) restaurarBackup(arq);
+  e.target.value = '';
+});
+
+/* ============================================================
+   SINO + MENU
+   ============================================================ */
+$('#btnSino').addEventListener('click', () => {
+  const painel = $('#painelNotificacoes');
+  const abrir = painel.hidden;
+  painel.hidden = !abrir;
+  $('#btnSino').setAttribute('aria-expanded', String(abrir));
+  if(abrir) atualizarSino();
+});
+
+$('#btnMenu').addEventListener('click', () => {
+  const aberto = $('#menuLateral').classList.contains('aberto');
+  aberto ? fecharMenu() : abrirMenu();
+});
+
+/* ============================================================
+   REDIMENSIONAMENTO + TECLADO
+   ============================================================ */
+let tmrResize = null;
+window.addEventListener('resize', () => {
+  clearTimeout(tmrResize);
+  tmrResize = setTimeout(() => {
+    if($('#app').hidden) return;
+    if(visaoAtual === 'painel') renderGraficos();
+  }, 220);
+});
+
+document.addEventListener('keydown', (e) => {
+  if(e.altKey && e.key.toLowerCase() === 'm'){
+    e.preventDefault();
+    if($('#app').hidden) return;
+    $('#menuLateral').classList.contains('aberto') ? fecharMenu() : abrirMenu();
+  }
+});
+
+/* ============================================================
+   INICIALIZAÇÃO
+   ============================================================ */
+(function iniciar(){
+  const campoUsuario = $('#campoUsuario');
+  if(campoUsuario) campoUsuario.focus();
+
+  try{
+    if(sessionStorage.getItem('nat_sessao') === 'ativa') entrarNoSistema();
+  }catch(e){}
+
+  setInterval(() => {
+    if(!$('#app').hidden) verificarNotificacoes();
+  }, 1800000);
+})();
+
+/* Polyfill roundRect */
+if(typeof CanvasRenderingContext2D !== 'undefined' &&
+   !CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r){
+    const raio = Array.isArray(r) ? r[0] : r;
+    this.beginPath();
+    this.moveTo(x + raio, y);
+    this.lineTo(x + w - raio, y);
+    this.quadraticCurveTo(x + w, y, x + w, y + raio);
+    this.lineTo(x + w, y + h - raio);
+    this.quadraticCurveTo(x + w, y + h, x + w - raio, y + h);
+    this.lineTo(x + raio, y + h);
+    this.quadraticCurveTo(x, y + h, x, y + h - raio);
+    this.lineTo(x, y + raio);
+    this.quadraticCurveTo(x, y, x + raio, y);
+    this.closePath();
+    return this;
+  };
+}
+</script>
+</body>
+</html>
